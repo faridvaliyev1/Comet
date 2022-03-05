@@ -1,4 +1,8 @@
 import Utils.Helper as helper
 
-print(helper.Helper.Read_csv("file.csv"))
+print("---------Application is starting----------------------")
 
+print("CSV is importing to the database")
+helper.Helper.Save_Csv_To_Sql("Data/wpt.csv")
+
+print("End of the operation")
