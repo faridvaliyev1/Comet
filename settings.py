@@ -1,4 +1,5 @@
 import os
+
 DATABASE_NAME="cometdb"
 DATABASE_USER="postgres"
 DATABASE_PASSWORD=os.environ["PostregrePassword"]
