@@ -2,21 +2,21 @@ import pandas as pd
 from sqlalchemy import create_engine
 import psycopg2
 import os
-import settings
+import Configurations
 
 
 #Database configuration
 engine = create_engine(
-f"""postgresql://{settings.DATABASE_USER}:{settings.DATABASE_PASSWORD}@
-{settings.DATABASE_HOST}:{settings.DATABASE_PORT}/{settings.DATABASE_NAME}"""
+f"""postgresql://{Configurations.DATABASE_USER}:{Configurations.DATABASE_PASSWORD}@
+{Configurations.DATABASE_HOST}:{Configurations.DATABASE_PORT}/{Configurations.DATABASE_NAME}"""
 )
 
 conn = psycopg2.connect(
-   database=settings.DATABASE_NAME, 
-   user=settings.DATABASE_USER, 
-   password=settings.DATABASE_PASSWORD, 
-   host=settings.DATABASE_HOST, 
-   port= settings.DATABASE_PORT
+   database=Configurations.DATABASE_NAME, 
+   user=Configurations.DATABASE_USER, 
+   password=Configurations.DATABASE_PASSWORD, 
+   host=Configurations.DATABASE_HOST, 
+   port= Configurations.DATABASE_PORT
 )
 conn.autocommit = True
 # End database configuration
