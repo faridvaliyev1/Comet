@@ -1,5 +1,3 @@
-from typing import final
-from warnings import catch_warnings
 import pandas as pd
 from sqlalchemy import create_engine
 import psycopg2
@@ -43,8 +41,6 @@ class Helper(object):
             cursor.close()
             conn.close()
         
-            
-
     @staticmethod
     def Insert(query,params):
         try:
