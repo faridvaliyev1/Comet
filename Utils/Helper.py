@@ -1,3 +1,4 @@
+from typing import final
 from warnings import catch_warnings
 import pandas as pd
 from sqlalchemy import create_engine
@@ -26,10 +27,38 @@ class Helper(object):
     #Sql level operations
     @staticmethod
     def Select(query):
-        pass
+        try:
+            cursor=conn.cursor()
+
+            cursor.execute(query=query)
+
+            data=cursor.fetchall()
+
+            return data
+        except:
+
+            raise ValueError("Operation is failed")
+
+        finally:
+            cursor.close()
+            conn.close()
+        
+            
 
     @staticmethod
-    def Insert(query):
-        pass
+    def Insert(query,params):
+        try:
+            cursor=conn.cursor()
+
+            cursor.executemany(query,params)
+        except:
+            raise ValueError("Operation is failed")
+        finally:
+            cursor.close()
+            conn.close()
+
+
+
+
 
     
