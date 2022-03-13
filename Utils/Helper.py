@@ -97,6 +97,31 @@ class Helper:
         
         CalculateMetrics(columns)
     
+    def SubjectPropertyBasket(columns):
+        sql=f"""SELECT "Subject","""
+
+        for column in columns:
+            if column[0].lower()!="Subject".lower():
+                sql+=f""" CASE WHEN "{str(column[0])}" IS NOT NULL THEN '{column[0]}' ELSE '' END, """
+        
+        sql=sql[0:len(sql)-2]
+        sql+=""" FROM WPT_TBL"""
+
+        Baskets=DbContext.Select(sql)
+        SubjectPropertyBaskets=[]
+
+        for basket in Baskets:
+            elements=[]
+            for index in range(1,len(basket)):
+
+                if basket[index]!="":
+                    elements.append(basket[index])
+            
+            SubjectPropertyBaskets.append({basket[0]:elements})
+        
+        return SubjectPropertyBaskets
+
+
     
         
         
