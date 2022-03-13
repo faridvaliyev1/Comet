@@ -1,3 +1,4 @@
+from msilib import datasizemask
 from Utils.Helper import Helper 
 from Utils.DataStructures import DataStructures
 from Utils.DBContext import DbContext
@@ -17,6 +18,7 @@ from Utils.DBContext import DbContext
 
 # print("----End of metrics calculation------------")
 
-columns=Helper.GetColumnInformation()
-print(Helper.SubjectPropertyBasket(columns=columns)[5])
+DS=DataStructures()
+
+print(DS.Subject_PropertyBasketCount)
 

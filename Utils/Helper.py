@@ -108,7 +108,7 @@ class Helper:
         sql+=""" FROM WPT_TBL"""
 
         Baskets=DbContext.Select(sql)
-        SubjectPropertyBaskets=[]
+        SubjectPropertyBaskets={}
 
         for basket in Baskets:
             elements=[]
@@ -117,7 +117,7 @@ class Helper:
                 if basket[index]!="":
                     elements.append(basket[index])
             
-            SubjectPropertyBaskets.append({basket[0]:elements})
+            SubjectPropertyBaskets[basket[0]]=elements
         
         return SubjectPropertyBaskets
 
