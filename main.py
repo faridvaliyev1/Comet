@@ -1,8 +1,20 @@
-import Utils.Helper as helper
+from Utils.Helper import Helper 
+from Utils.DataStructures import DataStructures
+from Utils.DBContext import DbContext
 
-print("---------Application is starting----------------------")
+print("---Application is starting------")
 
-print("CSV is importing to the database")
-helper.Helper.Save_Csv_To_Sql("Data/wpt.csv")
+print("---CSV is importing--------")
 
-print("End of the operation")
+DbContext.Save_Csv_To_Sql()
+
+print("---End of importing------")
+
+print("----Metrics calculation------------")
+
+columns=Helper.GetColumnInformation()
+Helper.CalculateMetrics(columns)
+
+print("----End of metrics calculation------------")
+
+
