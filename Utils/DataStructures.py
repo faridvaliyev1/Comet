@@ -11,7 +11,9 @@ class DataStructures:
     
     #-----------------Private methods-----------------------------------
     def find_PropertyUsageList(self):
-        self.PropertyUsageList=DbContext.Select("SELECT Column_Name as Name,Null_Count as Count FROM METRICS ORDER BY NULL_COUNT")
+        properties=DbContext.Select("SELECT Column_Name as Name,Not_Null_Count as Count FROM METRICS ORDER BY Not_Null_Count DESC")
+        
+        self.PropertyUsageList=dict((key,value) for key,value in properties) # converting to dictionary for O(1) lookup
         return self.PropertyUsageList
     
 
