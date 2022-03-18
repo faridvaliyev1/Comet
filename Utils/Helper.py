@@ -24,11 +24,15 @@ class Helper:
     
 
     def CalculateMetrics(columns):
-    
+        
+        sql="SELECT COUNT(*) as count from wpt_tbl"
+        
+        total_count=DbContext.Select(sql) 
+        
         sql="""SELECT """
 
         for column in columns:
-            sql+=f""" SUM(case when "{str(column[0])}" IS NULL Then 1 else 0 end) as {str(column[0])}_null_count,"""
+            sql+=f""" SUM(case when "{str(column[0])}" IS NOT NULL Then 1 else 0 end) as {str(column[0])}_not_null_count,"""
         
         sql=sql[:-1]
         sql+=" from wpt_tbl"
@@ -39,9 +43,9 @@ class Helper:
         for x in range(len(columns)):
             new_tuple=(str(columns[x][0]),int(data[x]),
             str(columns[x][1]),
-            str(Formulas.metric_total_null(int(str(data[x])),len(columns),22390)),
+            str(Formulas.metric_total_null(int(str(data[x])),len(columns),total_count)),
             str(Formulas.metric_total_null_column(int(str(data[x])),len(columns))),
-            str(Formulas.metric_total_null_row(int(str(data[x])),22390)))
+            str(Formulas.metric_total_null_row(int(str(data[x])),total_count)))
             print(f"{x} step tuple {new_tuple}")
             tuples.append(new_tuple)
             new_tuple=()
@@ -50,7 +54,7 @@ class Helper:
 
         DbContext.Insert(sql,())
 
-        query="INSERT INTO METRICS (COLUMN_NAME,NULL_COUNT,TYPE_NAME,METRIC_1,METRIC_2,METRIC_3) VALUES (%s,%s,%s,%s,%s,%s)"
+        query="INSERT INTO METRICS (COLUMN_NAME,Not_Null_Count,TYPE_NAME,METRIC_1,METRIC_2,METRIC_3) VALUES (%s,%s,%s,%s,%s,%s)"
         DbContext.Insert(query,tuples)
 
     def GetColumnInformation():
