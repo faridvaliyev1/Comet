@@ -27,8 +27,8 @@ class Helper:
         
         sql="SELECT COUNT(*) as count from wpt_tbl"
         
-        total_count=DbContext.Select(sql) 
-        
+        total_count=DbContext.Select(sql)[0]
+        print(total_count)
         sql="""SELECT """
 
         for column in columns:

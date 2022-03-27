@@ -1,6 +1,3 @@
-from ast import Pass
-
-
 class Formulas:
     
     def metric_total_null(total_nulls,column,row):
