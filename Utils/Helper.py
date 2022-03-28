@@ -16,27 +16,21 @@ class Helper:
         DbContext.Insert(sql)
 
     def CreateSchema(schema_name):
-        sql=f"""DROP SCHEMA {schema_name};CREATE SCHEMA {schema_name}"""
-
-        DbContext.Insert(sql)
-        
-        return schema_name
-    
+        print("yess")
 
     def CalculateMetrics(columns):
         
         sql="SELECT COUNT(*) as count from wpt_tbl"
         
-        total_count=DbContext.Select(sql)[0]
+        total_count=DbContext.Select(sql)[0][0]
         print(total_count)
         sql="""SELECT """
 
         for column in columns:
-            sql+=f""" SUM(case when "{str(column[0])}" IS NOT NULL Then 1 else 0 end) as {str(column[0])}_not_null_count,"""
+            sql+=f"""SUM(case when "{str(column[0])}" IS NOT NULL Then 1 else 0 end) as {str(column[0])}_not_null_count,"""
         
         sql=sql[:-1]
         sql+=" from wpt_tbl"
-
         data=DbContext.Select(sql)[0]
 
         tuples=[]
@@ -50,11 +44,24 @@ class Helper:
             tuples.append(new_tuple)
             new_tuple=()
         
+        # If tables doesnt exist then create
+        sql=f"""CREATE TABLE IF NOT EXISTS Metrics(
+            COLUMN_NAME VARCHAR(500),
+            NOT_NULL_COUNT INTEGER,
+            TYPE_NAME AS VARCHAR(50),
+            METRIC_1 AS DECIMAL(18,2),
+            METRIC_2 AS DECIMAL(18,2),
+            METRIC_3 AS DECIMAL(18,3)
+        );
+        """
+        DbContext.Insert(sql,())
+
         sql="""DELETE FROM METRICS"""
 
         DbContext.Insert(sql,())
 
         query="INSERT INTO METRICS (COLUMN_NAME,Not_Null_Count,TYPE_NAME,METRIC_1,METRIC_2,METRIC_3) VALUES (%s,%s,%s,%s,%s,%s)"
+
         DbContext.Insert(query,tuples)
 
     def GetColumnInformation():

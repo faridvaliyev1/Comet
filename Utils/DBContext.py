@@ -24,16 +24,16 @@ class DbContext:
             print("Operation failed")
         
     def Select(query):
-        try:
-            cursor=conn.cursor()
+        # try:
+        cursor=conn.cursor()
 
-            cursor.execute(query=query)
+        cursor.execute(query=query)
 
-            data=cursor.fetchall()
+        data=cursor.fetchall()
 
-            return data
-        except:
-            raise ValueError("Operation is failed")
+        return data
+        # except:
+        #     raise ValueError("Operation is failed")
     
     def Insert(query,params):
 
