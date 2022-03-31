@@ -2,9 +2,9 @@ from Utils.Formulas import Formulas
 
 class Clustering:
 
-    def __init__(self,SubjectPropertyBasket,PropertyUsage,Support_Threshold,Null_Threshold):
-
+    def __init__(self,SubjectPropertyBasket,Subject_PropertyBasketCount,PropertyUsage,Support_Threshold,Null_Threshold):
         self.SubjectPropertyBasket=SubjectPropertyBasket
+        self.Subject_PropertyBasketCount=Subject_PropertyBasketCount
         self.PropertyUsage=PropertyUsage
         self.Support_Threshold=Support_Threshold
         self.Null_Threshold=Null_Threshold
@@ -16,12 +16,13 @@ class Clustering:
         Baskets=[]
         Binary_Tables=[]
         Basket_length=len(self.SubjectPropertyBasket)
-        for key,value in self.SubjectPropertyBasket.items():
+        for key,value in self.Subject_PropertyBasketCount.items():
+            print((value/Basket_length)*100)
             if (value/Basket_length)*100>=self.Support_Threshold:
                 Baskets.append(key)
             else:
                 Binary_Tables.append(key)
-        
+        print(Binary_Tables)
         return Baskets,Binary_Tables
     
     def initialize(self):
@@ -33,16 +34,14 @@ class Clustering:
                 for c2 in range(len(self.Clusters)):
                     if c1!=c2 and set(self.Clusters[c1]).isdisjoint(self.Clusters[c2]):
                         Is_Final=False
+                        break
             
             if Is_Final:
                 self.Tables.append(self.Clusters[c1])
                 Removed_Indexes.append(c1)
         
-        for index in Removed_Indexes:
-            self.Clusters.remove(index)
-        
-                
-        
+        for index in sorted(Removed_Indexes,reverse=True):
+            del self.Clusters[index]
         
     
     # end private functions

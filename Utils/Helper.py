@@ -31,6 +31,7 @@ class Helper:
         
         sql=sql[:-1]
         sql+=" from wpt_tbl"
+        print(sql)
         data=DbContext.Select(sql)[0]
 
         tuples=[]
@@ -40,7 +41,6 @@ class Helper:
             str(Formulas.metric_total_null(int(str(data[x])),len(columns),total_count)),
             str(Formulas.metric_total_null_column(int(str(data[x])),len(columns))),
             str(Formulas.metric_total_null_row(int(str(data[x])),total_count)))
-            print(f"{x} step tuple {new_tuple}")
             tuples.append(new_tuple)
             new_tuple=()
         
@@ -48,10 +48,10 @@ class Helper:
         sql=f"""CREATE TABLE IF NOT EXISTS Metrics(
             COLUMN_NAME VARCHAR(500),
             NOT_NULL_COUNT INTEGER,
-            TYPE_NAME AS VARCHAR(50),
-            METRIC_1 AS DECIMAL(18,2),
-            METRIC_2 AS DECIMAL(18,2),
-            METRIC_3 AS DECIMAL(18,3)
+            TYPE_NAME  VARCHAR(50),
+            METRIC_1  DECIMAL(18,2),
+            METRIC_2  DECIMAL(18,2),
+            METRIC_3  DECIMAL(18,3)
         );
         """
         DbContext.Insert(sql,())
