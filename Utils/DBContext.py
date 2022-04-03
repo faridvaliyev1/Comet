@@ -38,5 +38,7 @@ class DbContext:
     def Insert(query,params):
 
         cursor=conn.cursor()
-        cursor.executemany(query,params)
-        
+        if params is None:
+            cursor.execute(query)
+        else:
+            cursor.executemany(query,params)

@@ -23,7 +23,5 @@ print("----End of metrics calculation------------")
 
 DS=DataStructures()
 
-# CS=Clustering(DS.SubjectPropertyBasket,DS.Subject_PropertyBasketCount,DS.PropertyUsageList,Configurations.SUPPORT_THRESHOLD,Configurations.NULL_THRESHOLD)
-
-
-
+CS=Clustering(DS.SubjectPropertyBasket,DS.Subject_PropertyBasketCount,DS.PropertyUsageList,Configurations.SUPPORT_THRESHOLD,Configurations.NULL_THRESHOLD)
+print(CS.Clusters)

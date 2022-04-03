@@ -23,7 +23,6 @@ class Helper:
         sql="SELECT COUNT(*) as count from wpt_tbl"
         
         total_count=DbContext.Select(sql)[0][0]
-        print(total_count)
         sql="""SELECT """
 
         for column in columns:
@@ -31,7 +30,6 @@ class Helper:
         
         sql=sql[:-1]
         sql+=" from wpt_tbl"
-        print(sql)
         data=DbContext.Select(sql)[0]
 
         tuples=[]
@@ -54,12 +52,12 @@ class Helper:
             METRIC_3  DECIMAL(18,3)
         );
         """
-        DbContext.Insert(sql,())
+        DbContext.Insert(sql,None)
 
         sql="""DELETE FROM METRICS"""
-
-        DbContext.Insert(sql,())
-
+        
+        DbContext.Insert(sql,None)
+        
         query="INSERT INTO METRICS (COLUMN_NAME,Not_Null_Count,TYPE_NAME,METRIC_1,METRIC_2,METRIC_3) VALUES (%s,%s,%s,%s,%s,%s)"
 
         DbContext.Insert(query,tuples)

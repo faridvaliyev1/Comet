@@ -17,12 +17,10 @@ class Clustering:
         Binary_Tables=[]
         Basket_length=len(self.SubjectPropertyBasket)
         for key,value in self.Subject_PropertyBasketCount.items():
-            print((value/Basket_length)*100)
             if (value/Basket_length)*100>=self.Support_Threshold:
                 Baskets.append(key)
             else:
                 Binary_Tables.append(key)
-        print(Binary_Tables)
         return Baskets,Binary_Tables
     
     def initialize(self):
