@@ -9,6 +9,8 @@ class Partitioning:
         self.initialize()
 
     #--- start of private functions
+    
+    # initializing the partitioning part
     def initialize(self):
         
         for cluster in self.Clusters:
@@ -18,7 +20,7 @@ class Partitioning:
             if Formulas.null_percentage(cluster,self.PropertyUsage)>self.Null_Threshold:
                 while Formulas.null_percentage(cluster,self.PropertyUsage)<=self.Null_Threshold:
                     index,property=self.find_most_nullable_property(cluster)
-                    cluster.pop(index)
+                    cluster.popitem(index)
                     if not self.property_exist(property):
                         self.Tables.append((property))
                     
@@ -27,7 +29,8 @@ class Partitioning:
             for cluster2 in self.Clusters:
                 cluster2=set(cluster2).difference(set(cluster))
         
-    
+    # Finding the property which is causing the most null values 
+    # Function returns index of the property in the cluster and as well as its name
     def find_most_nullable_property(self,Cluster):
         
         minimum=self.PropertyUsage[Cluster[0]]
@@ -41,6 +44,7 @@ class Partitioning:
         
         return index,minimum_property
     
+    # Finding whether the property is exist in the lower support cluster
     def property_exist(self,property):
         for cluster in self.Clusters:
             if property in cluster:
@@ -48,10 +52,6 @@ class Partitioning:
         
         return False
 
-
-
-            
-    
     #end of private functions
         
         

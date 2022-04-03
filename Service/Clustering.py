@@ -12,6 +12,9 @@ class Clustering:
         self.initialize()
 
     # private functions 
+
+    # Getting clusters and final tables from the given SubjectPropertybasket
+    # Function returns Clusters which will given to the next step and final tables
     def find_Clusters(self):
         Baskets=[]
         Binary_Tables=[]
@@ -23,6 +26,7 @@ class Clustering:
                 Binary_Tables.append(key)
         return Baskets,Binary_Tables
     
+    # This is setting up all the Clustering step
     def initialize(self):
         Removed_Indexes=[]
         for c1 in range(len(self.Clusters)):
