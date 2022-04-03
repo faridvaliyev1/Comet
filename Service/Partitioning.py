@@ -19,6 +19,9 @@ class Partitioning:
                 while Formulas.null_percentage(cluster,self.PropertyUsage)<=self.Null_Threshold:
                     index,property=self.find_most_nullable_property(cluster)
                     cluster.pop(index)
+                    if not self.property_exist(property):
+                        self.Tables.append((property))
+                    
                     
             self.Tables.append(cluster)
             for cluster2 in self.Clusters:
@@ -37,6 +40,15 @@ class Partitioning:
                 index=i
         
         return index,minimum_property
+    
+    def property_exist(self,property):
+        for cluster in self.Clusters:
+            if property in cluster:
+                return True
+        
+        return False
+
+
 
             
     
