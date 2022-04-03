@@ -1,4 +1,5 @@
 from numpy import column_stack
+from Service.Partitioning import Partitioning
 from Utils.Helper import Helper 
 from Utils.DataStructures import DataStructures
 from Utils.DBContext import DbContext
@@ -24,4 +25,5 @@ print("----End of metrics calculation------------")
 DS=DataStructures()
 
 CS=Clustering(DS.SubjectPropertyBasket,DS.Subject_PropertyBasketCount,DS.PropertyUsageList,Configurations.SUPPORT_THRESHOLD,Configurations.NULL_THRESHOLD)
-print(CS.Clusters)
+PT=Partitioning(CS.Tables,DS.PropertyUsageList,Configurations.NULL_THRESHOLD)
+# print(PT.Clusters)
