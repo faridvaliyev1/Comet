@@ -1,0 +1,1 @@
+1. We always start partitioning phase by looking for the clusters of highest support

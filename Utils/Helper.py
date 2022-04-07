@@ -114,6 +114,7 @@ class Helper:
                 sql+=f""" CASE WHEN "{str(column[0])}" IS NOT NULL THEN '{column[0]}' ELSE '' END, """
         
         sql=sql[0:len(sql)-2]
+        
         sql+=""" FROM WPT_TBL"""
 
         Baskets=DbContext.Select(sql)
