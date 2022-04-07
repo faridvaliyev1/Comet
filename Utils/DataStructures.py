@@ -1,3 +1,4 @@
+from pyparsing import col
 from Utils.DBContext import DbContext
 from Utils.Helper import Helper
 from collections import Counter
@@ -41,7 +42,17 @@ class DataStructures:
         te=TransactionEncoder()
         te_ary=te.fit(fpgrowth_list).transform(fpgrowth_list)
         df=pd.DataFrame(te_ary,columns=te.columns_)
-        return fpgrowth(df, min_support=0.5)
+        
+        fpgrowth_dict={}
+        fpgrowth_result=fpgrowth(df, min_support=0.5)
+        for index,row in fpgrowth_result.iterrows():
+            columns=[(te.columns_[column]) for column in row["itemsets"]]
+            fpgrowth_dict[tuple(columns)]=row["support"]
+        
+        return fpgrowth_dict
+            
+        
+        
 
     
     #-------------End of private methods --------------------------------------
