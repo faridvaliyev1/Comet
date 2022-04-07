@@ -5,7 +5,7 @@ from Utils.DataStructures import DataStructures
 from Utils.DBContext import DbContext
 from Service.Clustering import Clustering
 import Configurations
-import itertools
+
 
 print("---Application is starting------")
 
@@ -27,4 +27,5 @@ DS=DataStructures()
 CS=Clustering(DS.SubjectPropertyBasket,DS.Subject_PropertyBasketCount,DS.PropertyUsageList,Configurations.SUPPORT_THRESHOLD,Configurations.NULL_THRESHOLD)
 
 PT=Partitioning(CS.Clusters,DS.PropertyUsageList,Configurations.NULL_THRESHOLD)
-print(DS.Subject_PropertyBasketCount)
+print(DS.Fpgrowth_list)
+
