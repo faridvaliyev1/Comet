@@ -7,6 +7,7 @@ class Partitioning:
         self.PropertyUsage=PropertyUsage
         self.Tables=[]
         self.initialize()
+        print(self.Tables)
 
     #--- start of private functions
     
@@ -14,7 +15,7 @@ class Partitioning:
     def initialize(self):
         
         for cluster in self.Clusters:
-            print(self.find_most_nullable_property(cluster))
+            
             self.Clusters.remove(cluster)
             
             if Formulas.null_percentage(cluster,self.PropertyUsage)>self.Null_Threshold:
@@ -23,7 +24,6 @@ class Partitioning:
                     cluster.popitem(index)
                     if not self.property_exist(property):
                         self.Tables.append((property))
-                    
                     
             self.Tables.append(cluster)
             for cluster2 in self.Clusters:

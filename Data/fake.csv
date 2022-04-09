@@ -1,7 +1,7 @@
-name,Website,population
-Mike,~mike,""
-Mary,"",""
-Joe,"",""
-Kate,"",""
-"","",200k
-"","",300k
+Subject,name,Website,population
+Person1,Mike,~mike,""
+Person2,Mary,"~test",""
+Person3,Joe,"@test",""
+Person4,Kate,"",""
+City1,"","",200k
+Person5,"ferid","",""

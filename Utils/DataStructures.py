@@ -1,4 +1,3 @@
-from pyparsing import col
 from Utils.DBContext import DbContext
 from Utils.Helper import Helper
 from collections import Counter
@@ -38,7 +37,7 @@ class DataStructures:
         freqItemSet, rules = apriori(apriori_list, minSup=0.5, minConf=0.5)
         return freqItemSet,rules
     
-    def find_fpgrowth(self,):
+    def find_fpgrowth(self):
 
         fpgrowth_list=[value for key,value in self.SubjectPropertyBasket.items()]
         te=TransactionEncoder()
@@ -47,7 +46,7 @@ class DataStructures:
         
         fpgrowth_dict={}
         fpgrowth_result=fpgrowth(df, min_support=self.Support_Threshold)
-        for index,row in fpgrowth_result.iterrows():
+        for index,row in fpgrowth_result[::-1].iterrows():
             columns=[(te.columns_[column]) for column in row["itemsets"]]
             fpgrowth_dict[tuple(columns)]=row["support"]
         

@@ -19,7 +19,7 @@ class DbContext:
     def Save_Csv_To_Sql(file):
         try:
             wpt=pd.read_csv(file)
-            wpt.to_sql("wpt_tbl",engine)
+            wpt.to_sql("wpt_tbl",engine,index=False)
         except:
             print("Operation failed")
         

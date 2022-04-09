@@ -2,13 +2,15 @@ from Utils.Formulas import Formulas
 
 class Clustering:
 
-    def __init__(self,SubjectPropertyBasket,Subject_PropertyBasketCount,PropertyUsage,Support_Threshold,Null_Threshold):
+    def __init__(self,SubjectPropertyBasket,Subject_PropertyBasketCount,PropertyUsage,FpGrowth_List,Support_Threshold,Null_Threshold):
         self.SubjectPropertyBasket=SubjectPropertyBasket
+        self.FpGrowth_List=FpGrowth_List
         self.Subject_PropertyBasketCount=Subject_PropertyBasketCount
         self.PropertyUsage=PropertyUsage
         self.Support_Threshold=Support_Threshold
         self.Null_Threshold=Null_Threshold
         self.Clusters,self.Tables=self.find_Clusters()
+        
         self.initialize()
 
     # private functions 
@@ -18,19 +20,47 @@ class Clustering:
     def find_Clusters(self):
         Baskets=[]
         Binary_Tables=[]
-        Basket_length=len(self.SubjectPropertyBasket)
-        for key,value in self.Subject_PropertyBasketCount.items():
-            if (value/Basket_length)*100>=self.Support_Threshold:
+        for key,value in self.FpGrowth_List.items():
+            if not self.check_if_Subset(set(key),Baskets):
                 Baskets.append(key)
-            else:
+        
+        for key,value in self.Subject_PropertyBasketCount.items():
+            if self.check_if_Disjoint(set(key),Baskets):
                 Binary_Tables.append(key)
+        
+        
         return Baskets,Binary_Tables
     
+    def check_if_Subset(self,Key,Basket):
+        for element in Basket:
+            if Key.issubset(element):
+                return True
+        
+        return False
+    
+    def check_if_Disjoint(self,Key,Baskets):
+        for element in Baskets:
+            if Key.isdisjoint(element):
+                return True
+        
+        return False
+    
+    def find_Unique_Properties(self,Baskets):
+        Unique_Properties=[]
+        for basket in Baskets:
+            for item in basket:
+                if item not in Unique_Properties:
+                    Unique_Properties.append(item)
+        
+        return Unique_Properties
+            
+
     # This is setting up all the Clustering step
     def initialize(self):
         Removed_Indexes=[]
         for c1 in range(len(self.Clusters)):
             Is_Final=False
+            
             if Formulas.null_percentage(self.Clusters[c1],self.PropertyUsage)<=self.Null_Threshold:
                 Is_Final=True
                 for c2 in range(len(self.Clusters)):
