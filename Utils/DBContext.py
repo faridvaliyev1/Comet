@@ -16,9 +16,9 @@ class DbContext:
     def __init__(self):
         cursor=conn.cursor()
 
-    def Save_Csv_To_Sql():
+    def Save_Csv_To_Sql(file):
         try:
-            wpt=pd.read_csv("Data/wpt.csv")
+            wpt=pd.read_csv(file)
             wpt.to_sql("wpt_tbl",engine)
         except:
             print("Operation failed")
