@@ -9,10 +9,11 @@ from mlxtend.frequent_patterns import fpgrowth
 
 class DataStructures:
 
-    def __init__(self):
+    def __init__(self,Support_Threshold):
         self.PropertyUsageList=self.find_PropertyUsageList()
         self.SubjectPropertyBasket=self.find_SubjectPropertyBasket()
         self.Subject_PropertyBasketCount=self.find_Property_UsageCount()
+        self.Support_Threshold=Support_Threshold 
         self.Apriori_List=self.find_apriori()
         self.Fpgrowth_list=self.find_fpgrowth()
     
@@ -37,29 +38,19 @@ class DataStructures:
         freqItemSet, rules = apriori(apriori_list, minSup=0.5, minConf=0.5)
         return freqItemSet,rules
     
-    def find_fpgrowth(self):
+    def find_fpgrowth(self,):
+
         fpgrowth_list=[value for key,value in self.SubjectPropertyBasket.items()]
         te=TransactionEncoder()
         te_ary=te.fit(fpgrowth_list).transform(fpgrowth_list)
         df=pd.DataFrame(te_ary,columns=te.columns_)
         
         fpgrowth_dict={}
-        fpgrowth_result=fpgrowth(df, min_support=0.5)
+        fpgrowth_result=fpgrowth(df, min_support=self.Support_Threshold)
         for index,row in fpgrowth_result.iterrows():
             columns=[(te.columns_[column]) for column in row["itemsets"]]
             fpgrowth_dict[tuple(columns)]=row["support"]
         
         return fpgrowth_dict
-            
-        
-        
-
-    
-    #-------------End of private methods --------------------------------------
-
-    
- 
-            
-
-
-
+               
+    #-------------End of private methods -------------------------------------
