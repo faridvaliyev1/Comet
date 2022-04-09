@@ -12,8 +12,6 @@ class Clustering:
         self.Clusters,self.Tables=self.find_Clusters()
 
         self.initialize()
-        print(self.Clusters)
-        print(self.Tables)
         
         
 
@@ -26,9 +24,9 @@ class Clustering:
         Binary_Tables=[]
         for key,value in self.FpGrowth_List.items():
             if not self.check_if_Subset(set(key),Baskets):
-                if key in self.Subject_PropertyBasketCount.keys():
-                    Baskets.append(key)
-        # Baskets=self.FpGrowth_List.keys()
+                Baskets.append(key)
+        print(Baskets)
+        
         
         for key,value in self.Subject_PropertyBasketCount.items():
             if not self.check_if_Subset(set(key),Baskets):
@@ -69,12 +67,11 @@ class Clustering:
             Is_Final=False
             
             if Formulas.null_percentage(self.Clusters[c1],self.PropertyUsage)<=self.Null_Threshold:
-                print(c1)
+                
                 Is_Final=True
                 for c2 in range(len(self.Clusters)):
                     
                     if c1!=c2 and (set(self.Clusters[c1]) & set(self.Clusters[c2])):
-                        print(c2)
                         Is_Final=False
                         break
             

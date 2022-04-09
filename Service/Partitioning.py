@@ -7,7 +7,7 @@ class Partitioning:
         self.PropertyUsage=PropertyUsage
         self.Tables=[]
         self.initialize()
-        
+        print(self.Tables)
 
     #--- start of private functions
     
@@ -19,15 +19,22 @@ class Partitioning:
             self.Clusters.remove(cluster)
             
             if Formulas.null_percentage(cluster,self.PropertyUsage)>self.Null_Threshold:
-                while Formulas.null_percentage(cluster,self.PropertyUsage)<=self.Null_Threshold:
+                
+                while Formulas.null_percentage(cluster,self.PropertyUsage)>self.Null_Threshold:
+                    
                     index,property=self.find_most_nullable_property(cluster)
-                    cluster.popitem(index)
+                    
+                    cluster_list=list(cluster)
+                    cluster_list.remove(property)
+                    cluster=tuple(cluster_list)
                     if not self.property_exist(property):
                         self.Tables.append((property))
                     
             self.Tables.append(cluster)
             for cluster2 in self.Clusters:
+                print(cluster2)
                 cluster2=set(cluster2).difference(set(cluster))
+                print(cluster2)
         
     # Finding the property which is causing the most null values 
     # Function returns index of the property in the cluster and as well as its name
