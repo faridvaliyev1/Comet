@@ -11,7 +11,7 @@ print("---Application is starting------")
 
 print("---CSV is importing--------")
 
-DbContext.Save_Csv_To_Sql("Data/fake.csv")
+DbContext.Save_Csv_To_Sql("Data/fake2.csv")
 
 print("---End of importing------")
 
@@ -27,6 +27,6 @@ DS=DataStructures(Configurations.SUPPORT_THRESHOLD)
 
 CS=Clustering(DS.SubjectPropertyBasket,DS.Subject_PropertyBasketCount,DS.PropertyUsageList,DS.Fpgrowth_list,Configurations.SUPPORT_THRESHOLD,Configurations.NULL_THRESHOLD)
 
-PT=Partitioning(CS.Clusters,DS.PropertyUsageList,Configurations.NULL_THRESHOLD)
+# PT=Partitioning(CS.Clusters,DS.PropertyUsageList,Configurations.NULL_THRESHOLD)
 
 

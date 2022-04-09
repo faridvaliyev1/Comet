@@ -10,8 +10,12 @@ class Clustering:
         self.Support_Threshold=Support_Threshold
         self.Null_Threshold=Null_Threshold
         self.Clusters,self.Tables=self.find_Clusters()
-        
+
         self.initialize()
+        print(self.Clusters)
+        print(self.Tables)
+        
+        
 
     # private functions 
 
@@ -22,10 +26,12 @@ class Clustering:
         Binary_Tables=[]
         for key,value in self.FpGrowth_List.items():
             if not self.check_if_Subset(set(key),Baskets):
-                Baskets.append(key)
+                if key in self.Subject_PropertyBasketCount.keys():
+                    Baskets.append(key)
+        # Baskets=self.FpGrowth_List.keys()
         
         for key,value in self.Subject_PropertyBasketCount.items():
-            if self.check_if_Disjoint(set(key),Baskets):
+            if not self.check_if_Subset(set(key),Baskets):
                 Binary_Tables.append(key)
         
         
@@ -58,13 +64,17 @@ class Clustering:
     # This is setting up all the Clustering step
     def initialize(self):
         Removed_Indexes=[]
+        
         for c1 in range(len(self.Clusters)):
             Is_Final=False
             
             if Formulas.null_percentage(self.Clusters[c1],self.PropertyUsage)<=self.Null_Threshold:
+                print(c1)
                 Is_Final=True
                 for c2 in range(len(self.Clusters)):
-                    if c1!=c2 and set(self.Clusters[c1]).isdisjoint(self.Clusters[c2]):
+                    
+                    if c1!=c2 and (set(self.Clusters[c1]) & set(self.Clusters[c2])):
+                        print(c2)
                         Is_Final=False
                         break
             

@@ -13,7 +13,7 @@ class Formulas:
         Cluster_length=len(Cluster)
         Cluster_max_count=PropertyUsage[Cluster[0]]
         PropertyUsage_Sum=0
-        print(Cluster)
+       
         for property in Cluster:
             if Cluster_max_count<PropertyUsage[property]:
                 Cluster_max_count=PropertyUsage[property]
@@ -21,7 +21,7 @@ class Formulas:
             PropertyUsage_Sum+=PropertyUsage[property]
         
         cluster_null_percentage= ((Cluster_length*Cluster_max_count-PropertyUsage_Sum)/(Cluster_length+1)*Cluster_max_count)
-        print(cluster_null_percentage)
+        
         return cluster_null_percentage
         
         

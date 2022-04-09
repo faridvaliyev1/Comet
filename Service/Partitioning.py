@@ -7,7 +7,7 @@ class Partitioning:
         self.PropertyUsage=PropertyUsage
         self.Tables=[]
         self.initialize()
-        print(self.Tables)
+        
 
     #--- start of private functions
     
