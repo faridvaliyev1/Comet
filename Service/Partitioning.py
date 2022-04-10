@@ -1,13 +1,14 @@
 from Utils.Formulas import Formulas
 class Partitioning:
-    def __init__(self,Clusters,PropertyUsage,Null_Threshold):
+    def __init__(self,Clusters,Tables,PropertyUsage,Null_Threshold):
 
         self.Null_Threshold=Null_Threshold
         self.Clusters=Clusters
         self.PropertyUsage=PropertyUsage
-        self.Tables=[]
+        self.Tables=Tables
         self.initialize()
-        print(self.Tables)
+        
+        
 
     #--- start of private functions
     
@@ -31,10 +32,13 @@ class Partitioning:
                         self.Tables.append((property))
                     
             self.Tables.append(cluster)
-            for cluster2 in self.Clusters:
-                print(cluster2)
-                cluster2=set(cluster2).difference(set(cluster))
-                print(cluster2)
+            for index in range(len(self.Clusters)):
+                cluster2=self.Clusters[index]
+                self.Clusters[index]=set(cluster2).difference(set(cluster))
+        
+        for cluster in self.Clusters:
+            self.Tables.append(tuple(cluster))
+                
         
     # Finding the property which is causing the most null values 
     # Function returns index of the property in the cluster and as well as its name

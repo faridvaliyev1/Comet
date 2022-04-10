@@ -13,8 +13,6 @@ class Clustering:
 
         self.initialize()
         
-        
-
     # private functions 
 
     # Getting clusters and final tables from the given SubjectPropertybasket
@@ -25,8 +23,6 @@ class Clustering:
         for key,value in self.FpGrowth_List.items():
             if not self.check_if_Subset(set(key),Baskets):
                 Baskets.append(key)
-        print(Baskets)
-        
         
         for key,value in self.Subject_PropertyBasketCount.items():
             if not self.check_if_Subset(set(key),Baskets):
