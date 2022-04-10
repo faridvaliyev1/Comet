@@ -29,7 +29,7 @@ class Partitioning:
                     cluster_list.remove(property)
                     cluster=tuple(cluster_list)
                     if not self.property_exist(property):
-                        self.Tables.append((property))
+                        self.Tables.append((property,))
                     
             self.Tables.append(cluster)
             for index in range(len(self.Clusters)):
