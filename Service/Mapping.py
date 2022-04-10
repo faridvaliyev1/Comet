@@ -1,16 +1,114 @@
 import imp
 from importlib.abc import TraversableResources
+
 from Utils.DBContext import DbContext
 
 class Mapping:
     def __init__(self,Tables):
         self.Tables=Tables
-        self.from_tuple_to_sql()
+        print(self.Tables)
+        self.initialize()
+        
 
     #----------private functions--------------
 
-    def from_tuple_to_sql(self):
-        for item in self.Tables:
-            print(item)
+    def initialize(self):
+        for index in range(len(self.Tables)):
+            self.createMapping(self.Tables[index],"tables_"+str(index))
     
+    def partition_wpt(self,Cluster):
+        pass
+
+    def DropColumn(self,column_name,table_name):
+        sql=f"""
+        ALTER TABLE {table_name} drop column "{column_name}";
+            """
+        
+        DbContext.Insert(sql)
+    
+    def find_columns_information(self,Cluster):
+        sql="""SELECT COLUMN_NAME,TYPE_NAME FROM METRICS WHERE COLUMN_NAME IN (columns)"""
+        columns=""
+        for item in Cluster:
+            columns+="'" +item +"'"+","
+        
+        columns=columns[0:len(columns)-1]
+        sql=sql.replace("columns",columns)
+
+        data=DbContext.Select(sql)
+
+        return data
+    
+    def Create_Table(self,Table,Columns):
+        sql=f"""
+        CREATE SEQUENCE IF NOT EXISTS A_id_seq 
+        START WITH 1 
+        INCREMENT BY 1 
+        NO MINVALUE 
+        NO MAXVALUE 
+        CACHE 1; 
+        DROP TABLE IF EXISTS {Table};
+        CREATE TABLE {Table}(
+        ID BIGINT  NOT NULL DEFAULT nextval('A_id_seq'::regclass),
+        columns
+        )
+        """
+        elements=""
+        for element in Columns:
+            elements+=f""""{element[0]}" {element[1]},"""
+
+        elements=elements[0:len(elements)-1]
+
+        sql=sql.replace("columns",elements)
+        DbContext.Insert(sql,None)
+    
+    def fill_data(self,Table,Columns):
+        sql=f"""
+        INSERT INTO {Table} ({Columns})   
+        SELECT {Columns} from wpt_tbl
+        """
+        DbContext.Insert(sql,None)
+    
+    def create_global_mapping(self,Table,Columns):
+        sql="""
+            CREATE TABLE IF NOT EXISTS 
+            GLOBAL_MAPPING(
+                COLUMN_NAME text,
+                TABLE_NAME text
+            );
+        """
+        
+        DbContext.Insert(sql,None)
+
+        for column in Columns:
+            DbContext.Insert("INSERT INTO GLOBAL_MAPPING (COLUMN_NAME,TABLE_NAME) VALUES (%s,%s)",[(column[0],Table)])
+        
+
+    
+    def createMapping(self,Cluster,Table_Name):
+        
+        columns=self.find_columns_information(Cluster)
+        self.Create_Table(Table_Name,columns)
+
+        cols=""
+        for column in columns:
+            cols+=f"""{column[0]},"""
+        
+        cols=cols[0:len(cols)-1]
+
+        self.fill_data(Table_Name,cols)
+        
+
+        self.create_global_mapping(Table_Name,columns)
+        
+         
+        # self.DropColumn(,"wpt_tbl")
+        
+        sql="""
+        SELECT column_name,data_type FROM information_schema.columns
+        where table_name='wpt_tbl' and table_schema='public'
+        """
+        columns=DbContext.Select(sql)
+        
+        # self.CalculateMetrics(columns)
     #---------end of private functions--------

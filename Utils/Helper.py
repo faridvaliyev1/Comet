@@ -69,42 +69,6 @@ class Helper:
         """
         data=DbContext.Select(sql)
         return data
-
-    def DropColumn(column_name,table_name):
-        sql=f"""
-        ALTER TABLE {table_name} drop column "{column_name}";
-            """
-        
-        DbContext.Insert(sql)
-
-    def createMapping(column_name,table_name,type_name):
-        sql=f"""
-        DROP TABLE IF EXISTS {table_name};
-        CREATE TABLE {table_name}(
-        ID BIGINT,
-        "{column_name}" {type_name}
-        )
-        """
-
-        DbContext.Insert(sql)
-        
-        sql=f"""
-        INSERT INTO {table_name}
-        SELECT Index,"{column_name}" from wpt_tbl
-        """
-        DbContext.Insert(sql)
-        
-        DbContext.Insert("INSERT INTO GLOBAL_MAPPING (COLUMN_NAME,TABLE_NAME) VALUES (%s,%s)",(column_name,table_name))
-         
-        DropColumn(column_name,"wpt_tbl")
-        
-        sql="""
-        SELECT column_name,data_type FROM information_schema.columns
-        where table_name='wpt_tbl' and table_schema='public'
-        """
-        columns=DbContext.Select(sql)
-        
-        CalculateMetrics(columns)
     
     def SubjectPropertyBasket(columns):
         sql=f"""SELECT "Subject","""

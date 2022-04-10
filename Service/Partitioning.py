@@ -34,7 +34,7 @@ class Partitioning:
             self.Tables.append(cluster)
             for index in range(len(self.Clusters)):
                 cluster2=self.Clusters[index]
-                self.Clusters[index]=set(cluster2).difference(set(cluster))
+                self.Clusters[index]=list(set(cluster2).difference(set(cluster)))
         
         for cluster in self.Clusters:
             self.Tables.append(tuple(cluster))
