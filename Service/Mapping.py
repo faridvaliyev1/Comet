@@ -41,7 +41,7 @@ class Mapping:
     
     def Create_Table(self,Table,Columns):
         sql=f"""
-        CREATE SEQUENCE IF NOT EXISTS A_id_seq 
+        CREATE SEQUENCE IF NOT EXISTS Sequence_{Table}_seq 
         START WITH 1 
         INCREMENT BY 1 
         NO MINVALUE 
@@ -49,7 +49,7 @@ class Mapping:
         CACHE 1; 
         DROP TABLE IF EXISTS {Table};
         CREATE TABLE {Table}(
-        ID BIGINT  NOT NULL DEFAULT nextval('A_id_seq'::regclass),
+        ID BIGINT  NOT NULL DEFAULT nextval('Sequence_{Table}_seq'::regclass),
         columns
         )
         """
