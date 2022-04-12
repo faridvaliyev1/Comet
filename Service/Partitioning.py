@@ -6,7 +6,10 @@ class Partitioning:
         self.Clusters=Clusters
         self.PropertyUsage=PropertyUsage
         self.Tables=Tables
+        print(self.Tables)
         self.initialize()
+        print(self.Tables)
+        
         
         
 

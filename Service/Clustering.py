@@ -10,7 +10,7 @@ class Clustering:
         self.Support_Threshold=Support_Threshold
         self.Null_Threshold=Null_Threshold
         self.Clusters,self.Tables=self.find_Clusters()
-
+        
         self.initialize()
         
     # private functions 
