@@ -28,7 +28,8 @@ DS=DataStructures(Configurations.SUPPORT_THRESHOLD)
 CS=Clustering(DS.SubjectPropertyBasket,DS.Subject_PropertyBasketCount,DS.PropertyUsageList,DS.Fpgrowth_list,Configurations.SUPPORT_THRESHOLD,Configurations.NULL_THRESHOLD)
 
 PT=Partitioning(CS.Clusters,CS.Tables,DS.PropertyUsageList,Configurations.NULL_THRESHOLD)
-# MP=Mapping(PT.Tables)
+
+MP=Mapping(PT.Tables)
 
 
 

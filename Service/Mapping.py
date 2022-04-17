@@ -41,15 +41,9 @@ class Mapping:
     
     def Create_Table(self,Table,Columns):
         sql=f"""
-        CREATE SEQUENCE IF NOT EXISTS Sequence_{Table}_seq 
-        START WITH 1 
-        INCREMENT BY 1 
-        NO MINVALUE 
-        NO MAXVALUE 
-        CACHE 1; 
         DROP TABLE IF EXISTS {Table};
         CREATE TABLE {Table}(
-        ID BIGINT  NOT NULL DEFAULT nextval('Sequence_{Table}_seq'::regclass),
+        "Subject" VarChar,
         columns
         )
         """
@@ -64,9 +58,15 @@ class Mapping:
     
     def fill_data(self,Table,Columns):
         sql=f"""
-        INSERT INTO {Table} ({Columns})   
-        SELECT {Columns} from wpt_tbl
+        INSERT INTO {Table}
+        SELECT "Subject",{Columns} from wpt_tbl
+        WHERE
         """
+        for column in Columns.split(','):
+            sql+=column+" IS NOT NULL AND "
+        
+        sql=sql[0:len(sql)-4]
+        print(sql)
         DbContext.Insert(sql,None)
     
     def create_global_mapping(self,Table,Columns):
@@ -92,7 +92,7 @@ class Mapping:
 
         cols=""
         for column in columns:
-            cols+=f"""{column[0]},"""
+            cols+=f""""{column[0]}","""
         
         cols=cols[0:len(cols)-1]
 
