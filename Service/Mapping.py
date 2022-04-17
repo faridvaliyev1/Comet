@@ -19,13 +19,13 @@ class Mapping:
     def partition_wpt(self,Cluster):
         pass
 
-    def DropColumn(self,column_name,table_name):
-        sql=f"""
-        ALTER TABLE {table_name} drop column "{column_name}";
-            """
-        
-        DbContext.Insert(sql)
-    
+    def DropColumn(self,Columns,table_name):
+        for column in Columns.split(','):
+            sql=f"""
+            ALTER TABLE {table_name} drop column {column};
+                """
+            DbContext.Insert(sql,None)
+         
     def find_columns_information(self,Cluster):
         sql="""SELECT COLUMN_NAME,TYPE_NAME FROM METRICS WHERE COLUMN_NAME IN (columns)"""
         columns=""
@@ -101,8 +101,8 @@ class Mapping:
 
         self.create_global_mapping(Table_Name,columns)
         
-         
-        # self.DropColumn(,"wpt_tbl")
+        
+        self.DropColumn(cols,"wpt_tbl")
         
         sql="""
         SELECT column_name,data_type FROM information_schema.columns
