@@ -12,7 +12,7 @@ print("---Application is starting------")
 
 print("---CSV is importing--------")
 
-DbContext.Save_Csv_To_Sql("Data/fake.csv")
+DbContext.Save_Csv_To_Sql("Data/wpt.csv")
 
 print("---End of importing------")
 

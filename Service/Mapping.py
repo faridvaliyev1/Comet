@@ -6,7 +6,7 @@ from Utils.DBContext import DbContext
 class Mapping:
     def __init__(self,Tables):
         self.Tables=Tables
-        print(self.Tables)
+        
         self.initialize()
         
 
@@ -66,7 +66,6 @@ class Mapping:
             sql+=column+" IS NOT NULL AND "
         
         sql=sql[0:len(sql)-4]
-        print(sql)
         DbContext.Insert(sql,None)
     
     def create_global_mapping(self,Table,Columns):
@@ -102,7 +101,7 @@ class Mapping:
         self.create_global_mapping(Table_Name,columns)
         
         
-        self.DropColumn(cols,"wpt_tbl")
+        #self.DropColumn(cols,"wpt_tbl")
         
         sql="""
         SELECT column_name,data_type FROM information_schema.columns

@@ -3,4 +3,5 @@
 3. Create interface from ST 
 4. experiment on real dataset even if small, becuase you gonna try cleaning the predicates to be column names 
 5. Try to think of a way of labelling the ouptput tables, as starting point you can start from the emergent schema paper. 
-
+6. I need to check output of the clusters out of clustering phase (the ones that are not binary tables) against the null threshold. In other words, if the cluster meets the null
+threshold, we consider it as final n-ary (PT) table, if not we go to partitioning phase with those clusters (after excluding the ones that meet the null threshold). 

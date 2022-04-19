@@ -10,8 +10,11 @@ class Clustering:
         self.Support_Threshold=Support_Threshold
         self.Null_Threshold=Null_Threshold
         self.Clusters,self.Tables=self.find_Clusters()
-        
+        # print("start point of clustering")
+        print(self.Tables)
         self.initialize()
+        print("end point of the clustering")
+
         
     # private functions 
 
@@ -25,12 +28,19 @@ class Clustering:
                 Baskets.append(key)
         
         for key,value in self.Subject_PropertyBasketCount.items():
-            if not self.check_if_Subset(set(key),Baskets):
-                Binary_Tables.append(key)
-        
+            result=self.find_nonintersection(set(key),Baskets)
+            result_table=self.find_nonintersection(result,Binary_Tables)
+            print(result_table)
+            if len(result_table)>0:
+                Binary_Tables.append(tuple(result_table))
         
         return Baskets,Binary_Tables
     
+    def find_nonintersection(self,Key,Basket):
+        for element in Basket:
+            Key=(Key^set(element))&Key
+        return Key
+
     def check_if_Subset(self,Key,Basket):
         for element in Basket:
             if Key.issubset(element):
