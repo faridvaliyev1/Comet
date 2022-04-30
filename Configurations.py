@@ -1,4 +1,6 @@
+from operator import imod
 import os
+import re
 
 DATABASE_NAME="cometdb"
 DATABASE_USER="postgres"
@@ -6,7 +8,7 @@ DATABASE_PASSWORD="ferid"
 DATABASE_HOST="127.0.0.1"
 DATABASE_PORT="5433"
 
-SUPPORT_THRESHOLD=0.01
+SUPPORT_THRESHOLD=0.00001
 NULL_THRESHOLD=20
 
 
@@ -19,3 +21,7 @@ CONNECTION_CONFIG_DICT={
 }
 
 DATABASE_ENGINE=f"""postgresql://{DATABASE_USER}:{DATABASE_PASSWORD}@localhost:{DATABASE_PORT}/{DATABASE_NAME}"""
+sql="""WHERE wpt.sql=1 AND wpt.sql1=1
+        GROUP BY sql1
+        ORDER BY TEST
+"""
