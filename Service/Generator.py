@@ -1,4 +1,6 @@
 import re
+
+from sqlalchemy import distinct
 from Utils.DBContext import DbContext
 
 class Generator:
@@ -10,6 +12,9 @@ class Generator:
         return re.findall(r'(?:(?i)WHERE|SELECT|AND|OR|GROUP BY|ORDER BY|THEN|ELSE|CASE WHEN|ON|=) \(?([a-zA-Z0-9.,]+)', query)
     
     def find_tables(self,query):
+        return re.findall(r'(?:(?i)FROM|JOIN|=) \(?([a-zA-Z0-9.,]+)', query)
+    
+    def find_migrations(self,query):
 
         mappings=DbContext.Select("SELECT * FROM GLOBAL_MAPPING")
         column_dict={}
@@ -26,13 +31,25 @@ class Generator:
                     column_dict[column_part]=(schema_part,mapping[1])
         
         return column_dict
-                
+    
+    def construct_join_statement(self,tables):
+
+        joins=""
+        for index in range(len(list(tables))):
+            if index==0:
+                joins=f"FROM {tables[index]} "
+            else:
+                joins+=f"""LEFT OUTER JOIN {tables[index]} 
+                                             ON {tables[index]}.Subject={tables[index-1]}.Subject"""
+        
+        return joins
+                        
     def construct_query(self,query):
 
-        tables_dict=self.find_tables(query)
-
-        distinct_tables=set(value for value in tables_dict.values())
-
+        tables_dict=self.find_migrations(query)
+        old_tables=self.find_tables(query)
+        distinct_tables=list(set(value[1] for value in tables_dict.values()))
+        
         for key,value in tables_dict.items():
             query=query.replace(value[0]+"."+key,value[1]+"."+key)
         

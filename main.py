@@ -37,7 +37,7 @@ gn=Generator()
 sql="""select wpt.age2 , case when wpt.name='ferid' then wpt.name1 else wpt.age1 end from wpt
         join wpt2 ON wpt2.Subject1 = wpt.Subject1
          where wpt.name<>'ferid' and wpt.age<>10"""
-
+sql="select wpt.age from wpt where wpt.name='ferid'"
 print(gn.construct_query(sql))
 
 
