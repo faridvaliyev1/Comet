@@ -21,7 +21,3 @@ CONNECTION_CONFIG_DICT={
 }
 
 DATABASE_ENGINE=f"""postgresql://{DATABASE_USER}:{DATABASE_PASSWORD}@localhost:{DATABASE_PORT}/{DATABASE_NAME}"""
-sql="""WHERE wpt.sql=1 AND wpt.sql1=1
-        GROUP BY sql1
-        ORDER BY TEST
-"""
