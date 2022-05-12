@@ -1,3 +1,4 @@
+from ntpath import join
 import re
 
 from sqlalchemy import distinct
@@ -35,13 +36,13 @@ class Generator:
     def construct_join_statement(self,tables):
 
         joins=""
-        for index in range(len(list(tables))):
+        
+        for index in range(len(tables)):
             if index==0:
-                joins=f"FROM {tables[index]} "
+                joins=f" {tables[index]} "
             else:
                 joins+=f"""LEFT OUTER JOIN {tables[index]} 
                                              ON {tables[index]}.Subject={tables[index-1]}.Subject"""
-        
         return joins
                         
     def construct_query(self,query):
@@ -53,4 +54,20 @@ class Generator:
         for key,value in tables_dict.items():
             query=query.replace(value[0]+"."+key,value[1]+"."+key)
         
+
+        join_statement=self.construct_join_statement(distinct_tables)
+        query=query.replace(self.remove_old_join(query),join_statement+" ")
+        
         return query
+    
+    def remove_old_join(self,query):
+        start=query.lower().find("from".lower())+len("from")
+        end=0
+        keywords=["where","group by","order by"]
+        for keyword in keywords:
+            end=query.find(keyword)
+            if end>0:
+                break
+        
+        substring=query[start:end]
+        return substring
