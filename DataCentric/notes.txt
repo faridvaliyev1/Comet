@@ -5,3 +5,4 @@
 5. Try to think of a way of labelling the ouptput tables, as starting point you can start from the emergent schema paper. 
 6. I need to check output of the clusters out of clustering phase (the ones that are not binary tables) against the null threshold. In other words, if the cluster meets the null
 threshold, we consider it as final n-ary (PT) table, if not we go to partitioning phase with those clusters (after excluding the ones that meet the null threshold). 
+7. Considering wpt.name and wpt1.name in column_dict
