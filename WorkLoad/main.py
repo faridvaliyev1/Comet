@@ -11,8 +11,17 @@ columns=[    ["name","surname"]
             ,["age","phone"]
             ,["age","website"]   
                                  ]
+# ["name","surname","age","phone","website"]
 DS=DataStructures(columns)
 
 aum= DS.generate_attribute_usage_matrix(columns)
 
+
 aam=DS.generate_attribute_affinity_matrix(aum)
+
+
+
+
+bea=DS.BEA(aam)
+
+print(bea)
