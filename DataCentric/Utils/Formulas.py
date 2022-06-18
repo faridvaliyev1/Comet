@@ -10,8 +10,10 @@ class Formulas:
         return total_nulls/row
     
     def null_percentage(Cluster,PropertyUsage):
+        Cluster_max_count=0
         Cluster_length=len(Cluster)
-        Cluster_max_count=PropertyUsage[Cluster[0]]
+        if Cluster_length>0:
+            Cluster_max_count=PropertyUsage[Cluster[0]]
         PropertyUsage_Sum=0
        
         for property in Cluster:

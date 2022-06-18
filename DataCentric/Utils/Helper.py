@@ -16,7 +16,7 @@ class Helper:
         DbContext.Insert(sql)
 
     def CreateSchema(schema_name):
-        print("yess")
+        pass
 
     def CalculateMetrics(columns):
         

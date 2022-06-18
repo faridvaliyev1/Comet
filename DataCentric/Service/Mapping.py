@@ -14,7 +14,8 @@ class Mapping:
 
     def initialize(self):
         for index in range(len(self.Tables)):
-            self.createMapping(self.Tables[index],"tables_"+str(index))
+            if len(self.Tables[index])>0:
+                self.createMapping(self.Tables[index],"tables_"+str(index))
     
     def partition_wpt(self,Cluster):
         pass

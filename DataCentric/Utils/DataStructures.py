@@ -34,7 +34,7 @@ class DataStructures:
     # apriori algorithm
     def find_apriori(self):
         apriori_list=[value for key,value in self.SubjectPropertyBasket.items()]
-        freqItemSet, rules = apriori(apriori_list, minSup=0.5, minConf=0.5)
+        freqItemSet, rules = apriori(apriori_list, minSup=self.Support_Threshold, minConf=0.5)
         return freqItemSet,rules
     
     def find_fpgrowth(self):

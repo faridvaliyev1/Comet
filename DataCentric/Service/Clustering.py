@@ -11,9 +11,9 @@ class Clustering:
         self.Null_Threshold=Null_Threshold
         self.Clusters,self.Tables=self.find_Clusters()
         # print("start point of clustering")
-        print(self.Tables)
+        
         self.initialize()
-        print("end point of the clustering")
+        
 
         
     # private functions 
@@ -30,7 +30,7 @@ class Clustering:
         for key,value in self.Subject_PropertyBasketCount.items():
             result=self.find_nonintersection(set(key),Baskets)
             result_table=self.find_nonintersection(result,Binary_Tables)
-            print(result_table)
+            
             if len(result_table)>0:
                 Binary_Tables.append(tuple(result_table))
         
