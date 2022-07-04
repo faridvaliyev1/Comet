@@ -2,15 +2,21 @@ from unittest import result
 from joblib import PrintTime
 import numpy as np
 from itertools import permutations 
+import Configuration
+from Utils.DataStructures import DataStructures
+from Helper.Helper import Helper
+import numpy as np
 
+columns=Helper.get_workloads()
+# ["name","surname","age","phone","website"]
+DS=DataStructures(columns)
+
+
+aum= DS.generate_attribute_usage_matrix(columns)
+print(aum)
+
+a=DS.generate_attribute_affinity_matrix(aum)
 # affinity_matrix 
-
-a=np.array([
-    [45,0,45,0]
-    ,[0,80,5,75]
-    ,[45,5,53,3]
-    ,[0,75,3,78]
-])
 
 # a = np.array([[60, 0, 45, 60], [0,50,50,10], [45, 50, 95, 55], [60, 10, 55, 70]])
 
@@ -21,33 +27,25 @@ def bond(a_x, a_y):
 
 dim = a.shape[0]
 
-
 permutations = list(permutations(range(dim))) 
-
-
+print("This step is passed")
 best_score = 0
 best = None
-
 for p in permutations:
   bond_energy = []
   for i in range(dim-1):
     bond_energy += [bond(a[:,[p[i]]],a[:,[p[i+1]]])]
-  
+    
   if sum(bond_energy) > best_score: 
     best_score = sum(bond_energy); best = p
 
-
-permutation = [0, 2,1,3]
+print("test")
+permutation =best  #[0, 2,1,3]
 
 idx = np.empty_like(permutation)
 idx[permutation] = np.arange(len(permutation))
 a[:] = a[:, idx]
 a[:]=a[idx,:]
-print(a)
-
-print('\n')
-print('Best Order:', best, 'Highest Bond Energy', best_score)
-
 
 def partitioning(matrix,point):
     QI=0
@@ -68,12 +66,22 @@ def partitioning(matrix,point):
 
     
     QI=Sum-(QL+QU)
-    print("QU: ",QU)
-    print("QL",QL)
-    print("QI",QI)
     return (QU*QL)-np.power(QI,2)
 
-print(partitioning(a,3))
+for level in range(Configuration.PARTITIONING):
+  p=1
+  length=a.shape[0]
+  for p in range(length):
+    Z=partitioning(a,p)
+    if Z<0:
+      break
 
-# 80 column you defined variable how many iteration should run
+  matrix=np.zeros((p,p))
+  for i in range(p):
+    for j in range(p):
+      matrix[i,j]=a[i,j]
+  print("Point is :",p)
+  a=matrix
+
+print(a)
 
