@@ -1,18 +1,173 @@
-import os
-import glob
-import pandas as pd
-os.chdir(os.getcwd()+"/Data/wide_property_table_csv")
-# cols="s,http___purl_org_goodrelations_offers,http___schema_org_wordCount,http___xmlns_com_foaf_homepage,http___purl_org_ontology_mo_producer,http___schema_org_actor,http___schema_org_numberOfPages,http___purl_org_ontology_mo_movement,http___schema_org_birthDate,http___db_uwaterloo_ca__galuc_wsdbm_purchaseDate,http___schema_org_producer,http___purl_org_stuff_rev_hasReview,http___schema_org_isbn,http___purl_org_ontology_mo_performer,http___purl_org_goodrelations_name,http___schema_org_director,http___purl_org_ontology_mo_record_number,http___schema_org_jobTitle,http___schema_org_openingHours,http___schema_org_language,http___schema_org_publisher,http___purl_org_dc_terms_Location,http___www_geonames_org_ontology_parentCountry,http___schema_org_aggregateRating,http___www_w3_org_1999_02_22_rdf_syntax_ns_type,http___schema_org_employee,http___purl_org_goodrelations_price,http___schema_org_award,http___schema_org_duration,http___purl_org_goodrelations_description,http___schema_org_faxNumber,http___schema_org_expires,http___schema_org_eligibleQuantity,http___purl_org_stuff_rev_title,http___db_uwaterloo_ca__galuc_wsdbm_composer,http___db_uwaterloo_ca__galuc_wsdbm_gender,http___ogp_me_ns_title,http___schema_org_editor,http___purl_org_stuff_rev_rating,http___purl_org_goodrelations_includes,http___db_uwaterloo_ca__galuc_wsdbm_hits,http___schema_org_trailer,http___schema_org_keywords,http___purl_org_goodrelations_validThrough,http___schema_org_email,http___schema_org_priceValidUntil,http___purl_org_ontology_mo_performed_in,http___schema_org_nationality,http___purl_org_stuff_rev_reviewer,http___schema_org_text,http___db_uwaterloo_ca__galuc_wsdbm_makesPurchase,http___schema_org_description,http___schema_org_bookEdition,http___db_uwaterloo_ca__galuc_wsdbm_userId,http___purl_org_ontology_mo_opus,http___schema_org_telephone,http___schema_org_contentSize,http___xmlns_com_foaf_familyName,http___purl_org_goodrelations_serialNumber,http___purl_org_ontology_mo_release,http___schema_org_datePublished,http___purl_org_stuff_rev_totalVotes,http___db_uwaterloo_ca__galuc_wsdbm_hasGenre,http___schema_org_printPage,http___purl_org_stuff_rev_text,http___purl_org_ontology_mo_conductor,http___ogp_me_ns_tag,http___schema_org_eligibleRegion,http___xmlns_com_foaf_givenName,http___db_uwaterloo_ca__galuc_wsdbm_follows,http___schema_org_paymentAccepted,http___xmlns_com_foaf_age,http___purl_org_ontology_mo_artist,http___schema_org_printSection,http___schema_org_author,http___purl_org_goodrelations_validFrom,http___schema_org_printColumn,http___schema_org_caption,http___schema_org_url,http___db_uwaterloo_ca__galuc_wsdbm_likes,http___schema_org_contentRating,http___schema_org_printEdition,http___db_uwaterloo_ca__galuc_wsdbm_purchaseFor,http___schema_org_legalName,http___db_uwaterloo_ca__galuc_wsdbm_subscribes,http___db_uwaterloo_ca__galuc_wsdbm_friendOf,http___schema_org_contactPoint"
-# headers=cols.split(',')
-# print(headers)
-extension = 'csv'
-all_filenames = [i for i in glob.glob('*.{}'.format(extension))]
+from Utils.DBContext import DbContext
+import re
 
-sum=0
-for file in all_filenames:
+Aliases=[
+    ["T0","T1"],
+    ["T_User","T_City"],
+    ["T0"],
+    ["T0"],
+    ["T_User","T_City"],
+    ["S0","S1"],
+    ["S0"],
+    ["S0","S3"],
+    ["S0","S3"],
+    ["S0"],
+    ["S0"],
+    ["T0","T1"],
+    ["V0","V3"],
+    ["V0","V1"],
+    ["V0","V5","V4"],
+    ["V0","V1","V2","V7"],
+    ["V0","V1","V2"],
+    ["V0","V4","V7"],
+    ["V0","V2","V3","V7","V4","V8"],
+    ["T0"],
+
+]
+
+f=open("queries.txt","r")
+queries=[]
+query=""
+for line in f.readlines():
+    if line.count("--END--")>0:
+        queries.append(query)
+        query=""
+    else:
+        query+=line
     
-    for row in open(file):
-        sum+= 1
- #printing the result
-print("Number of lines present:-", sum)
 
+def find_tables_columns(Tables,sql):
+    tables_dict={}
+    special_characters=["(",")",","," ","=","\n"]
+    keywords=["ON","JOIN","SELECT"]
+    for table in Tables:
+        columns=["Subject"]
+        pattern=table+"\."
+        for m in re.finditer(pattern,sql):
+            column=""
+            for index in range(m.end(),len(sql)):
+                if special_characters.count(sql[index])==0:
+                    
+                    column=column+sql[index]
+                else:
+                    break
+            if column.upper() not in keywords:
+                columns.append(column)
+
+            tables_dict[table]=list(set(columns))
+    
+    return tables_dict
+
+def find_table_info(Tables):
+    tables_dict={}
+    for table in Tables:
+        columns=[]
+        data=DbContext.Select(f"""select column_name from global_mapping where table_name='{table}'""")
+        for element in data:
+            columns.append(element[0])
+        
+        tables_dict[table]=columns
+
+    return tables_dict
+        
+
+def create_join(*columns):
+
+    sql=f"""select distinct table_name
+            from global_mapping
+            where column_name in {columns}
+                                    """
+    distinct_tables=DbContext.Select(sql)
+
+    select_columns=''
+
+    for column in columns:
+        select_columns+=f'{column},'
+    
+    select_columns=select_columns[:-1]
+
+    sql=f"""select table_name,c.column_name,count(*) over (partition by table_name) as count_ from global_mapping gm
+            join (select count(*) as count_,column_name from global_mapping 
+            where column_name in {columns} and column_name<>'Subject'
+            group by column_name 
+            having count(*)>1) c on gm.column_name =c.column_name
+            order by count_ desc"""
+
+    multiple_predicates=DbContext.Select(sql)
+    columns_dict={}
+    for element in multiple_predicates:
+        columns_dict.setdefault(element[1],[]).append(element[0])
+    
+    
+    if(len(multiple_predicates)!=0):
+        Tables=[]
+        for table in multiple_predicates:
+            Tables.append(table[0])
+        
+        
+        tables_dict=find_table_info(Tables)
+        # for item in multiple_predicates:
+        #     tables_dict.setdefault(item[0],[]).append(item[1])
+        
+        best_count=0
+        best_table=""
+        tables=[]
+        print(columns_dict)
+        for k,v in columns_dict.items():
+            for element in v:
+                
+                if sorted(tables_dict[element])==sorted(list(columns)):
+
+                    distinct_tables=[element]
+
+                    break
+                else:
+                    intersection_count=len(set(tables_dict[element]).intersection(set(columns)))
+                    
+                    if best_count<intersection_count:
+                        best_count=intersection_count
+                        best_table=element
+                    elif best_count==intersection_count:
+                        
+                        sql=f"""select count(*) from {best_table} t1,global_mapping gm
+                            where gm.table_name ='{best_table}'"""
+                        
+                        old_table_size=DbContext.Select(sql)[0]
+                        
+                        sql=f"""select count(*) from {element} t1,global_mapping gm
+                            where gm.table_name ='{element}'"""
+
+                        new_table_size=DbContext.Select(sql)[0]
+
+                        if old_table_size>=new_table_size:
+                            best_table=element
+            
+            tables.append(best_table)
+            best_count=0
+            best_table=""
+
+        distinct_tables=list(set(tables))        
+    else:
+        distinct_tables=[table[0] for table in distinct_tables]
+        
+                
+    join=f"""Select {select_columns} from """.replace("(","").replace(")","").replace("'","").replace("Subject",distinct_tables[0]+".Subject")
+    
+    for index in range(len(distinct_tables)):
+        if index==0:
+            join+=f" {distinct_tables[index]} "
+        else:
+            join+=f"""full join {distinct_tables[index]} on {distinct_tables[index]}.Subject={distinct_tables[index-1]}.Subject \n"""
+    
+    return join
+
+for index in range(len(queries)):
+    tables_dict=find_tables_columns(Aliases[index],queries[index])
+    print(tables_dict)
+    for key,value in tables_dict.items():
+        join=create_join(*value)
+        queries[index]=queries[index].replace(f"WPT {key}",f"({join}) as {key}")
+    
+    f=open("queries_h20_100k.txt","a")
+    f.write(queries[index]+"\n--END--")
+    f.close()

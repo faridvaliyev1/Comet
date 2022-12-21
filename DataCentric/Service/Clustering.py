@@ -71,7 +71,6 @@ class Clustering:
         
         for c1 in range(len(self.Clusters)):
             Is_Final=False
-            
             if Formulas.null_percentage(self.Clusters[c1],self.PropertyUsage)<=self.Null_Threshold:
                 
                 Is_Final=True

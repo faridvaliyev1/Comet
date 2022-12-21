@@ -1,6 +1,5 @@
 from operator import imod
-import os
-import re
+from pyspark import SparkContext
 
 DATABASE_NAME="cometdb"
 DATABASE_USER="postgres"
@@ -11,6 +10,16 @@ DATABASE_PORT="5433"
 SUPPORT_THRESHOLD=0.2
 NULL_THRESHOLD=10
 
+# sc=SparkContext("local","Comet")
+# words=sc.parallelize(
+#     ["scala",
+#      "java",
+#      "hadoop",
+#      "akka",
+#      "sparksql"]
+# )
+# counts=words.count()
+# print("Number of elements in RDD",counts)
 
 CONNECTION_CONFIG_DICT={
     'database':DATABASE_NAME, 

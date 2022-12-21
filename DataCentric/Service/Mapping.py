@@ -1,15 +1,13 @@
-import imp
-from importlib.abc import TraversableResources
-
-from Utils.DBContext import DbContext
+from tkinter import W
+from Utils.DBContext import DbContext,conn
 
 class Mapping:
     def __init__(self,Tables):
+
         self.Tables=Tables
-        
+
         self.initialize()
         
-
     #----------private functions--------------
 
     def initialize(self):
@@ -60,11 +58,11 @@ class Mapping:
     def fill_data(self,Table,Columns):
         sql=f"""
         INSERT INTO {Table}
-        SELECT "Subject",{Columns} from wpt_tbl
+        SELECT DISTINCT "Subject",{Columns} from wpt_tbl
         WHERE
         """
         for column in Columns.split(','):
-            sql+=column+" IS NOT NULL AND "
+            sql+=column+" IS NOT NULL OR "
         
         sql=sql[0:len(sql)-4]
         DbContext.Insert(sql,None)
@@ -112,3 +110,18 @@ class Mapping:
         
         # self.CalculateMetrics(columns)
     #---------end of private functions--------
+
+    def copy_to_table(self):
+        
+        sql="SELECT distinct TABLE_NAME FROM GLOBAL_MAPPING"
+
+        tables=DbContext.Select(sql)
+
+        for table in tables:
+
+            sql=f"COPY (SELECT * FROM {table[0]}) TO STDOUT WITH CSV HEADER"
+
+            cursor=conn.cursor()
+
+            with open("Data/results2/h20_100k/"+f"{table[0]}.csv", "w") as file:
+                cursor.copy_expert(sql, file)

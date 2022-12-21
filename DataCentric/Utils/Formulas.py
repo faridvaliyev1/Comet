@@ -19,12 +19,15 @@ class Formulas:
         for property in Cluster:
             if Cluster_max_count<PropertyUsage[property]:
                 Cluster_max_count=PropertyUsage[property]
-            
             PropertyUsage_Sum+=PropertyUsage[property]
+
+
+        numerator=Cluster_length*Cluster_max_count-PropertyUsage_Sum
+        denominator=(Cluster_length+1)*Cluster_max_count
         
-        cluster_null_percentage= ((Cluster_length*Cluster_max_count-PropertyUsage_Sum)/(Cluster_length+1)*Cluster_max_count)
+        cluster_null_percentage= numerator/denominator
         
-        return cluster_null_percentage
+        return cluster_null_percentage*100
         
         
         

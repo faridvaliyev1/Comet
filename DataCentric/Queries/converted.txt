@@ -1,0 +1,13 @@
+---
+SELECT  T0.Subject
+FROM  (Select tables_32.Subject,http___db_uwaterloo_ca__galuc_wsdbm_likes,http___db_uwaterloo_ca__galuc_wsdbm_friendOf,http___purl_org_dc_terms_Location,http___xmlns_com_foaf_age,http___db_uwaterloo_ca__galuc_wsdbm_gender,http___xmlns_com_foaf_givenName from  tables_32 join tables_30 on tables_30.Subject=tables_32.Subject join tables_28 on tables_28.Subject=tables_30.Subject join tables_31 on tables_31.Subject=tables_28.Subject ) as T0
+
+WHERE T0.http___db_uwaterloo_ca__galuc_wsdbm_likes  is not null
+AND   T0.http___db_uwaterloo_ca__galuc_wsdbm_friendOf  is not null
+AND   T0.http___purl_org_dc_terms_Location  is not null
+AND   T0.http___xmlns_com_foaf_age      is not null
+AND   T0.http___db_uwaterloo_ca__galuc_wsdbm_gender   is not null
+AND   T0.http___xmlns_com_foaf_givenName is not null
+---
+???
+---

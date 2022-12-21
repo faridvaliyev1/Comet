@@ -1,0 +1,238 @@
+--10--
+SELECT DISTINCT T0.Subject, T1.Subject, T1.http___schema_org_caption
+FROM WPT T0
+JOIN WPT T1
+ON array_contains (T0.http___db_uwaterloo_ca__galuc_wsdbm_likes,T1.Subject)
+WHERE  array_contains ( T0.http___db_uwaterloo_ca__galuc_wsdbm_subscribes ,"<http://db.uwaterloo.ca/~galuc/wsdbm/Website7355>")
+AND T1.http___schema_org_caption  is not null
+--END--
+
+--11--
+SELECT DISTINCT T_User.Subject, TT.http___www_geonames_org_ontology_parentCountry
+FROM WPT as T_User
+JOIN (
+SELECT T_City.http___www_geonames_org_ontology_parentCountry
+FROM WPT as T_City
+WHERE T_City.Subject="<http://db.uwaterloo.ca/~galuc/wsdbm/City70>") TT
+ON TT.http___www_geonames_org_ontology_parentCountry=T_User.http___schema_org_nationality
+WHERE array_contains(T_User.http___db_uwaterloo_ca__galuc_wsdbm_likes,"<http://db.uwaterloo.ca/~galuc/wsdbm/Product0>")
+--END--
+
+--12--
+SELECT DISTINCT T0.Subject, likes
+FROM WPT T0
+lateral view explode (T0.http___db_uwaterloo_ca__galuc_wsdbm_likes) T0Likes as likes
+WHERE array_contains (T0.http___db_uwaterloo_ca__galuc_wsdbm_subscribes ,"<http://db.uwaterloo.ca/~galuc/wsdbm/Website43164>")
+AND T0.http___db_uwaterloo_ca__galuc_wsdbm_likes is not null
+--END--
+
+--13--
+SELECT  DISTINCT T0.Subject, T0.http___schema_org_caption
+FROM WPT T0
+WHERE array_contains (T0.http___ogp_me_ns_tag, "<http://db.uwaterloo.ca/~galuc/wsdbm/Topic142>")
+AND T0.http___schema_org_caption is not null
+--END--
+
+--14--
+SELECT DISTINCT T_User.Subject, T_User.http___schema_org_jobTitle, TT.http___www_geonames_org_ontology_parentCountry
+FROM WPT T_User
+JOIN (
+SELECT T_City.http___www_geonames_org_ontology_parentCountry
+FROM WPT T_City
+WHERE T_City.Subject="<http://db.uwaterloo.ca/~galuc/wsdbm/City40>") TT
+ON TT.http___www_geonames_org_ontology_parentCountry=T_User.http___schema_org_nationality
+WHERE T_User.http___schema_org_jobTitle is not null
+--END--
+
+--15--
+SELECT S1.Subject, S1.http___purl_org_goodrelations_includes, S1.http___purl_org_goodrelations_price,
+S1.http___purl_org_goodrelations_serialNumber, S1.http___purl_org_goodrelations_validFrom, S1.http___purl_org_goodrelations_validThrough,
+eligbileRegion, S1.http___schema_org_eligibleQuantity, S1.http___schema_org_priceValidUntil
+FROM WPT S0
+JOIN WPT S1
+ON  array_contains(S0.http___purl_org_goodrelations_offers,S1.Subject)
+AND S0.Subject='<http://db.uwaterloo.ca/~galuc/wsdbm/Retailer8535>'
+lateral view explode (S1.http___schema_org_eligibleRegion) S1Eligible as eligbileRegion
+WHERE
+S1.http___purl_org_goodrelations_includes  is not null
+AND S1.http___purl_org_goodrelations_price is not null
+AND S1.http___purl_org_goodrelations_serialNumber is not null
+AND S1.http___purl_org_goodrelations_validFrom is not null
+AND S1.http___purl_org_goodrelations_validThrough is not null
+AND S1.http___schema_org_eligibleQuantity is not null
+AND S1.http___schema_org_eligibleRegion is not null
+AND S1.http___schema_org_priceValidUntil is not null
+--END--
+
+--16--
+SELECT DISTINCT S0.Subject, S0.http___schema_org_caption, hasGenre, S0.http___schema_org_publisher
+ FROM WPT S0
+ lateral view explode (S0.http___db_uwaterloo_ca__galuc_wsdbm_hasGenre) S0HasGenre as hasGenre
+ WHERE array_contains (S0.http___www_w3_org_1999_02_22_rdf_syntax_ns_type, "<http://db.uwaterloo.ca/~galuc/wsdbm/ProductCategory4>")
+ AND S0.http___schema_org_caption is not null
+ AND S0.http___db_uwaterloo_ca__galuc_wsdbm_hasGenre is not null
+ AND S0.http___schema_org_publisher is not null
+--END--
+
+--17--
+ SELECT DISTINCT S0.Subject, S0.http___xmlns_com_foaf_familyName, S3.Subject
+ FROM WPT S0
+ JOIN WPT S3 ON S3.http___purl_org_ontology_mo_artist=S0.Subject
+ WHERE S0.http___xmlns_com_foaf_age="<http://db.uwaterloo.ca/~galuc/wsdbm/AgeGroup5>"
+ AND S0.http___xmlns_com_foaf_familyName IS NOT NULL
+ AND S0.http___schema_org_nationality="<http://db.uwaterloo.ca/~galuc/wsdbm/Country1>"
+--END--
+
+--18--
+SELECT DISTINCT S0.Subject, S0.http___xmlns_com_foaf_familyName, S3.Subject
+ FROM WPT S0
+ JOIN WPT S3 ON S3.http___purl_org_ontology_mo_artist=S0.Subject
+ WHERE S0.http___xmlns_com_foaf_age='<http://db.uwaterloo.ca/~galuc/wsdbm/AgeGroup5>'
+ AND S0.http___xmlns_com_foaf_familyName IS NOT NULL
+ AND S0.http___schema_org_nationality='<http://db.uwaterloo.ca/~galuc/wsdbm/Country1>'
+--END--
+
+--19--
+SELECT DISTINCT S0.Subject, S0.http___schema_org_description, S0.http___schema_org_keywords
+FROM WPT S0
+WHERE array_contains (S0.http___www_w3_org_1999_02_22_rdf_syntax_ns_type, "<http://db.uwaterloo.ca/~galuc/wsdbm/ProductCategory3>")
+AND    array_contains (S0.http___schema_org_language,"<http://db.uwaterloo.ca/~galuc/wsdbm/Language0>")
+AND S0.http___schema_org_description IS NOT NULL
+AND S0.http___schema_org_keywords IS NOT NULL
+--END--
+
+--20--
+SELECT DISTINCT S0.Subject, S0.http___purl_org_ontology_mo_conductor, type
+FROM WPT S0
+lateral view explode (S0.http___www_w3_org_1999_02_22_rdf_syntax_ns_type) S0Type as type
+WHERE   array_contains (S0.http___db_uwaterloo_ca__galuc_wsdbm_hasGenre,"<http://db.uwaterloo.ca/~galuc/wsdbm/SubGenre130>")
+AND S0.http___purl_org_ontology_mo_conductor is not null
+AND S0.http___www_w3_org_1999_02_22_rdf_syntax_ns_type  is not null
+--END--
+
+--21--
+SELECT DISTINCT T0.Subject, type, T0.http___schema_org_text
+FROM WPT T0
+JOIN WPT T1
+ON array_contains (T1.http___db_uwaterloo_ca__galuc_wsdbm_likes,T0.Subject)
+AND T1.Subject="<http://db.uwaterloo.ca/~galuc/wsdbm/User54768>"
+lateral view explode (T0.http___www_w3_org_1999_02_22_rdf_syntax_ns_type) T0Type as type
+WHERE T0.http___www_w3_org_1999_02_22_rdf_syntax_ns_type IS NOT NULL
+AND T0.http___schema_org_text IS NOT NULL
+--END--
+
+--22--
+SELECT DISTINCT V0.Subject, V0.http___www_w3_org_1999_02_22_rdf_syntax_ns_type, V3.Subject, trailer, V3.http___schema_org_keywords
+FROM WPT V0
+JOIn WPT V3
+ON   array_contains   (V3.http___db_uwaterloo_ca__galuc_wsdbm_hasGenre,V0.Subject)
+AND  array_contains  (V0.http___ogp_me_ns_tag, "<http://db.uwaterloo.ca/~galuc/wsdbm/Topic8>")
+lateral view explode (V3.http___schema_org_trailer) V3Trailer as trailer
+WHERE array_contains(V3.http___www_w3_org_1999_02_22_rdf_syntax_ns_type, "<http://db.uwaterloo.ca/~galuc/wsdbm/ProductCategory2>")
+AND V3.http___schema_org_keywords is not null
+AND V3.http___schema_org_trailer is not null
+--END--
+
+--23--
+SELECT DISTINCT V0.Subject, V0.http___xmlns_com_foaf_homepage, V0.http___ogp_me_ns_title, V0.http___schema_org_caption, V0.http___schema_org_description, V1.http___schema_org_url, V1.http___db_uwaterloo_ca__galuc_wsdbm_hits
+FROM WPT V0
+JOIN WPT V1
+ON V0.http___xmlns_com_foaf_homepage =V1.Subject
+WHERE array_contains (V0.http___db_uwaterloo_ca__galuc_wsdbm_hasGenre,"<http://db.uwaterloo.ca/~galuc/wsdbm/SubGenre117>")
+AND V0.http___ogp_me_ns_title is not null
+AND V0.http___schema_org_caption is not null
+AND V0.http___schema_org_description is not null
+AND V1.http___schema_org_url is not null
+AND V1.http___db_uwaterloo_ca__galuc_wsdbm_hits is not null
+--END--
+
+--24--
+SELECT DISTINCT V0.Subject, V0.http___schema_org_contentRating, V0.http___schema_org_contentSize, V4.Subject, V5.Subject, V5.http___db_uwaterloo_ca__galuc_wsdbm_purchaseDate
+FROM WPT V0
+JOIN WPT V5
+ON V0.Subject=V5.http___db_uwaterloo_ca__galuc_wsdbm_purchaseFor
+AND array_contains (V0.http___db_uwaterloo_ca__galuc_wsdbm_hasGenre,"<http://db.uwaterloo.ca/~galuc/wsdbm/SubGenre111>")
+JOIN WPT V4
+ON  array_contains (V4.http___db_uwaterloo_ca__galuc_wsdbm_makesPurchase,V5.Subject)
+WHERE V0.http___schema_org_contentRating is not null
+AND V0.http___schema_org_contentSize is not null
+AND V5.http___db_uwaterloo_ca__galuc_wsdbm_purchaseDate is not null
+--END--
+
+--25--
+SELECT DISTINCT V0.Subject, V1.Subject, V2.Subject, V0.http___schema_org_description, V0.http___schema_org_contentSize, V1.http___schema_org_url, V1.http___db_uwaterloo_ca__galuc_wsdbm_hits, V7.Subject
+FROM WPT V0
+JOIN WPT V1
+ON V0.http___xmlns_com_foaf_homepage=V1.Subject
+AND   array_contains (V1.http___schema_org_language,"<http://db.uwaterloo.ca/~galuc/wsdbm/Language0>")
+JOIN WPT V2
+ON V0.Subject=V2.http___purl_org_goodrelations_includes
+JOIN WPT V7
+ON   array_contains (V7.http___db_uwaterloo_ca__galuc_wsdbm_likes,V0.Subject)
+WHERE array_contains (V0.http___ogp_me_ns_tag,"<http://db.uwaterloo.ca/~galuc/wsdbm/Topic122>")
+AND V0.http___schema_org_description is not null
+AND V0.http___schema_org_contentSize is not null
+AND V1.http___schema_org_url is not null
+AND V1.http___db_uwaterloo_ca__galuc_wsdbm_hits is not null
+--END--
+
+--26--
+SELECT DISTINCT V0.Subject, V1.Subject, V0.http___purl_org_goodrelations_price, V0.http___purl_org_goodrelations_validThrough, V1.http___ogp_me_ns_title, type
+FROM WPT V0
+JOIN WPT V1
+ON V0.http___purl_org_goodrelations_includes=V1.Subject
+JOIN WPT V2
+ON  array_contains(V2.http___purl_org_goodrelations_offers,V0.Subject)
+AND V2.Subject="<http://db.uwaterloo.ca/~galuc/wsdbm/Retailer9885>"
+lateral view explode (V1.http___www_w3_org_1999_02_22_rdf_syntax_ns_type) V1Type as type
+WHERE V0.http___purl_org_goodrelations_price is not null
+AND V0.http___purl_org_goodrelations_validThrough is not null
+AND V1.http___ogp_me_ns_title is not null
+AND V1.http___www_w3_org_1999_02_22_rdf_syntax_ns_type is not null
+--END--
+
+--27--
+SELECT DISTINCT V0.Subject, hasReview, V4.http___purl_org_stuff_rev_reviewer, language
+FROM WPT V0
+JOIN WPT V4
+ON array_contains (V0.http___purl_org_stuff_rev_hasReview,V4.Subject)
+JOIN WPT V6
+ON V4.http___purl_org_stuff_rev_reviewer=V6.Subject
+JOIN WPT V7
+ON  array_contains(V7.http___schema_org_actor, V6.Subject)
+lateral view explode (V0.http___purl_org_stuff_rev_hasReview) V0HasReview as hasReview
+lateral view explode (V7.http___schema_org_language) V7Langauage as language
+WHERE  V0.http___schema_org_caption is not null
+AND V0.http___schema_org_text is not null
+AND V0.http___schema_org_contentRating is not null
+AND V4.http___purl_org_stuff_rev_title is not null
+AND V7.http___schema_org_language is not null
+--END--
+
+--28--
+SELECT DISTINCT V0.Subject, V3.Subject, V4.Subject, V8.Subject
+FROM WPT V0
+JOIN WPT V2
+ON  array_contains(V0.http___purl_org_goodrelations_offers,V2.Subject)
+AND array_contains(V2.http___schema_org_eligibleRegion,"<http://db.uwaterloo.ca/~galuc/wsdbm/Country3>")
+JOIN WPT V3 ON V2.http___purl_org_goodrelations_includes=V3.Subject
+JOIN WPT V7 ON V7.http___db_uwaterloo_ca__galuc_wsdbm_purchaseFor=V3.Subject
+JOIN WPT V4 ON array_contains (V4.http___db_uwaterloo_ca__galuc_wsdbm_makesPurchase,V7.Subject)
+JOIN WPT V8 ON array_contains(V3.http___purl_org_stuff_rev_hasReview,V8.Subject)
+WHERE V4.http___schema_org_jobTitle is not null
+AND V0.http___schema_org_legalName is not null
+AND V4.http___xmlns_com_foaf_homepage is not null
+AND V8.http___purl_org_stuff_rev_totalVotes is not null
+--END--
+
+--29--
+SELECT  T0.Subject
+FROM  WPT T0
+
+WHERE T0.http___db_uwaterloo_ca__galuc_wsdbm_likes  is not null
+AND   T0.http___db_uwaterloo_ca__galuc_wsdbm_friendOf  is not null
+AND   T0.http___purl_org_dc_terms_Location  is not null
+AND   T0.http___xmlns_com_foaf_age       is not null
+AND   T0.http___db_uwaterloo_ca__galuc_wsdbm_gender    is not null
+AND   T0.http___xmlns_com_foaf_givenName is not null
+--END--
