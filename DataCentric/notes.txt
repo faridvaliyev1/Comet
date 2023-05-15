@@ -1,2 +1,0 @@
-star0: ['http___db_uwaterloo_ca__galuc_wsdbm_subscribes', 'http___schema_org_nationality', 'http___db_uwaterloo_ca__galuc_wsdbm_likes']
-star1: ['http___ogp_me_ns_tag', 'http___schema_org_caption']

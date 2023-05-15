@@ -42,7 +42,7 @@ class Mapping:
         sql=f"""
         DROP TABLE IF EXISTS {Table};
         CREATE TABLE {Table}(
-        "Subject" VarChar,
+        Subject VarChar,
         columns
         )
         """
@@ -58,7 +58,7 @@ class Mapping:
     def fill_data(self,Table,Columns):
         sql=f"""
         INSERT INTO {Table}
-        SELECT DISTINCT "Subject",{Columns} from wpt_tbl
+        SELECT DISTINCT Subject,{Columns} from wpt_tbl
         WHERE
         """
         for column in Columns.split(','):
@@ -123,5 +123,5 @@ class Mapping:
 
             cursor=conn.cursor()
 
-            with open("Data/results2/h20_100k/"+f"{table[0]}.csv", "w") as file:
+            with open("Data/results2/h20_100M/"+f"{table[0]}.csv", "w") as file:
                 cursor.copy_expert(sql, file)

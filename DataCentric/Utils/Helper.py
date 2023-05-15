@@ -71,7 +71,7 @@ class Helper:
         return data
     
     def SubjectPropertyBasket(columns):
-        sql=f"""SELECT "Subject","""
+        sql=f"""SELECT Subject,"""
 
         for column in columns:
             if column[0].lower()!="Subject".lower():

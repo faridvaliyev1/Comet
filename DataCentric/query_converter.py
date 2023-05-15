@@ -168,6 +168,6 @@ for index in range(len(queries)):
         join=create_join(*value)
         queries[index]=queries[index].replace(f"WPT {key}",f"({join}) as {key}")
     
-    f=open("queries_h20_100k.txt","a")
+    f=open("queries_datacentric_100M.txt","a")
     f.write(queries[index]+"\n--END--")
     f.close()
