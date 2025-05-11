@@ -83,9 +83,8 @@ This will:
 
 ## 📄 License
 
-This project is licensed under the MIT License.
 
 ## 🙋‍♂️ Contact
 
 Maintained by [Farid Valiyev](https://github.com/faridvaliyev1).  
-Feel free to open an issue or submit a pull request!
+
