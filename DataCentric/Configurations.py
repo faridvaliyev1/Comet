@@ -1,10 +1,10 @@
 from operator import imod
 from pyspark import SparkContext
 
-DATABASE_NAME="cometdb"
-DATABASE_USER="postgres"
-DATABASE_PASSWORD="ferid"
-DATABASE_HOST="127.0.0.1"
+DATABASE_NAME="wellmate"
+DATABASE_USER="wellmate"
+DATABASE_PASSWORD="wellmate123"
+DATABASE_HOST="localhost"
 DATABASE_PORT="5433"
 
 SUPPORT_THRESHOLD=0.2

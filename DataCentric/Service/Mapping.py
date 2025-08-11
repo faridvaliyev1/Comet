@@ -58,7 +58,7 @@ class Mapping:
     def fill_data(self,Table,Columns):
         sql=f"""
         INSERT INTO {Table}
-        SELECT DISTINCT Subject,{Columns} from wpt_tbl
+        SELECT DISTINCT "Subject",{Columns} from wpt_tbl
         WHERE
         """
         for column in Columns.split(','):
