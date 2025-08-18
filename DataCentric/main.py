@@ -1,5 +1,4 @@
-from pickle import TRUE
-from re import I
+
 from psycopg2 import connect
 from Utils.Helper import Helper 
 from Utils.DataStructures import DataStructures
