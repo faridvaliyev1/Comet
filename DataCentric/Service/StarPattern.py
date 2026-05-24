@@ -1,110 +1,74 @@
-import re
+from Service.RDFWidePropertyTable import RDFWidePropertyTable
+from Service.SparqlWorkload import SparqlWorkload
+
+
 class StarPattern:
-    def __init__(self,workload):
-        self.workload=workload
-        self.prefix=self.find_prefix()
-        self.stars,self.connectors=self.find_stars()
+    def __init__(self, workload):
+        self.workload = workload
+        self.sparql_workload = SparqlWorkload(workload)
+        self.prefix = {}
+        self.stars, self.connectors = self.find_stars()
 
-    
-    # private functions
     def find_stars(self):
-        file=open(self.workload,"r")
-        stars={}
-        star_properties={}
-        star_connectors=[]
-        query_stars=[]
-        objects=[]
-        query_counter=0
-        for line in file.readlines():
-            if "{" in line:
-                query_counter+=1
-                continue
-            elif ":" in line and "#" not in line and line.startswith("PREFIX")==False:
+        stars = {}
+        star_connectors = []
 
-                patterns=line.replace("\t","").split(" ")
-                subject=patterns[0]
-                property=patterns[1]
-                
-                property_key=property.split(":")[0]+":"
-            
-                if property_key in self.prefix:
-                    
-                    property=property.replace(property_key,self.prefix[property_key])
+        for query_counter, (_path, query) in enumerate(self.sparql_workload.read_queries(), start=1):
+            star_properties = {}
+            objects = []
 
-                if property=="http___www_w3_org_1999_02_22_rdf_syntax_ns_type":
+            for subject, predicate, obj in self.sparql_workload.triple_patterns(query):
+                if predicate.startswith("?"):
                     continue
 
-                object=patterns[2]
-                
-                if subject not in query_stars:
-                    query_stars.append(subject)
-                
-                if "?" in object or "http://" in object:
-                    objects.append((object,property))
-                
-                if subject not in star_properties:
-                    star_properties[subject]=[property]
-                else:
-                    my_list=star_properties[subject]
-                    my_list.append(property)
-                    star_properties[subject]=my_list
+                property_name = RDFWidePropertyTable.normalize_uri(predicate)
 
-            elif "}" in line:
-                stars["query"+str(query_counter)]=star_properties
-                for object in objects:
-                    if object[0] in star_properties:
-                        star_connectors.append(object[1])
+                if property_name == "http___www_w3_org_1999_02_22_rdf_syntax_ns_type":
+                    continue
 
-                star_properties={}
-                objects=[]
-            
-        return (stars,set(star_connectors))
-                    
+                star_properties.setdefault(subject, []).append(property_name)
+
+                if obj.startswith("?") or obj.startswith("http://") or obj.startswith("https://"):
+                    objects.append((obj, property_name))
+
+            stars["query" + str(query_counter)] = star_properties
+
+            for obj, property_name in objects:
+                if obj in star_properties:
+                    star_connectors.append(property_name)
+
+        return stars, set(star_connectors)
+
     def combine_stars(self):
+        stars_dict = {}
+        counter = 0
 
-        stars_dict={}
-        counter=0
-        for key,value in self.stars.items():
-            for k,v in value.items():
-                is_combined=False
-                if len(stars_dict)==0:
-                    stars_dict["star"+str(counter)]=v
-                    counter+=1
-                    is_combined=True
+        for _key, value in self.stars.items():
+            for _subject, properties in value.items():
+                is_combined = False
+
+                if len(stars_dict) == 0:
+                    stars_dict["star" + str(counter)] = properties
+                    counter += 1
+                    is_combined = True
                 else:
-                    for k1,v1 in stars_dict.items():
-                        if len(list(set(v).intersection(set(v1))))!=0:
-                            # print("Joined:",v)
-                            # print("Combined:",v1)
-                            union=list(set(v).union(set(v1)))
-                            # print("Union:",union)
-                            stars_dict[k1]=union
-                            is_combined=True
-                            # print("------------------------")
+                    for star_key, star_properties in stars_dict.items():
+                        if len(list(set(properties).intersection(set(star_properties)))) != 0:
+                            stars_dict[star_key] = list(set(properties).union(set(star_properties)))
+                            is_combined = True
 
-                
-                if is_combined==False:
-                    counter+=1
-                    stars_dict["star"+str(counter)]=v
+                if is_combined == False:
+                    counter += 1
+                    stars_dict["star" + str(counter)] = properties
 
-
-        for k,v in stars_dict.items():
-            for k1,v1 in stars_dict.items():
-                if k!=k1 and len(list(set(v).intersection(v1)))!=0:
-                    union=list(set(v).union(v1))
-                    stars_dict[k1]=union
-                    stars_dict[k]=()           
+        for key, properties in stars_dict.items():
+            for other_key, other_properties in stars_dict.items():
+                if key != other_key and len(list(set(properties).intersection(other_properties))) != 0:
+                    union = list(set(properties).union(other_properties))
+                    stars_dict[other_key] = union
+                    stars_dict[key] = ()
 
         return stars_dict
 
     def find_prefix(self):
-        prefix={}
-        file=open(self.workload,"r")
-
-        for line in file.readlines():
-            if line.startswith("PREFIX"):
-                group=line.split(" ")[1]
-                url=line.split(" ")[2].replace("<","").replace(">","").replace(" ","")
-                prefix[group]="".join([ c if c.isalnum() else "_" for c in url])[:-1]
-                
-        return prefix
+        return {}

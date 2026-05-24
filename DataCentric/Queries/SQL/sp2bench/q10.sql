@@ -1,0 +1,1 @@
+-- Unsupported query: q10.sparql: queries with only variable predicates are not supported

@@ -1,0 +1,3 @@
+SELECT DISTINCT T_v0."Subject" AS "v0"
+FROM (SELECT tables_52."Subject" AS "Subject", tables_52."http___db_uwaterloo_ca__galuc_wsdbm_likes" AS "http___db_uwaterloo_ca__galuc_wsdbm_likes", tables_52."http___db_uwaterloo_ca__galuc_wsdbm_friendOf" AS "http___db_uwaterloo_ca__galuc_wsdbm_friendOf", tables_52."http___purl_org_dc_terms_Location" AS "http___purl_org_dc_terms_Location", tables_52."http___xmlns_com_foaf_age" AS "http___xmlns_com_foaf_age", tables_52."http___db_uwaterloo_ca__galuc_wsdbm_gender" AS "http___db_uwaterloo_ca__galuc_wsdbm_gender", tables_52."http___xmlns_com_foaf_givenName" AS "http___xmlns_com_foaf_givenName"
+FROM tables_52) AS T_v0

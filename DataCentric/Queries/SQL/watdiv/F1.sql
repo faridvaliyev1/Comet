@@ -1,0 +1,1 @@
+-- Unsupported query: F1.sparql: No generated table found for columns: http___schema_org_trailer
