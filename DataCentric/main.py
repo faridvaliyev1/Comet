@@ -19,7 +19,7 @@ def parse_args():
     parser.add_argument(
         "--dataset",
         default="Data/watdiv/watdiv.nt",
-        help="Input RDF dataset path. Supported formats: .nt and line-oriented .n3",
+        help="Input RDF dataset file or directory. Supported files: .nt, .n3, .ttl, .rdf",
     )
     parser.add_argument(
         "--rdf-format",

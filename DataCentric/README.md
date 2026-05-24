@@ -4,7 +4,7 @@ This project builds a data-centric relational schema from an RDF dataset and a S
 
 The pipeline:
 
-1. Reads an RDF dataset in `.nt` or line-oriented `.n3` format.
+1. Reads an RDF dataset from one RDF file or a directory of RDF files.
 2. Generates a wide property table (WPT) CSV.
 3. Imports the WPT into PostgreSQL as `wpt_tbl`.
 4. Runs the existing metrics, clustering, partitioning, star-pattern, and mapping logic.
@@ -95,7 +95,7 @@ Queries/SQL/sp2bench/q1.sql
 ## Useful Arguments
 
 ```text
---dataset           RDF dataset path, usually .nt or .n3
+--dataset           RDF dataset file or directory, usually .nt or .n3
 --rdf-format        Optional format override: nt or n3
 --workload          SPARQL workload file or directory
 --dataset-name      Name used for Queries/SQL/<dataset-name>
@@ -115,6 +115,8 @@ python main.py \
   --wpt-output Data/generated/wpt_watdiv.csv \
   --converted-output Queries/SQL/watdiv
 ```
+
+If `--dataset` points to a directory, all RDF files inside that directory are merged into a single WPT before the rest of the pipeline runs. Files are discovered recursively and read in sorted order. Supported extensions are `.nt`, `.n3`, `.ttl`, and `.rdf`.
 
 ## Converting Queries Only
 

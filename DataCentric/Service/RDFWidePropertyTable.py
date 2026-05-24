@@ -4,6 +4,8 @@ from pathlib import Path
 
 
 class RDFWidePropertyTable:
+    RDF_EXTENSIONS = {".nt", ".n3", ".ttl", ".rdf"}
+
     def __init__(self, dataset_path, output_path=None, rdf_format=None):
         self.dataset_path = Path(dataset_path)
         self.rdf_format = rdf_format or self.dataset_path.suffix.lower().lstrip(".")
@@ -11,7 +13,26 @@ class RDFWidePropertyTable:
         self.prefixes = {}
 
     def default_output_path(self):
-        return Path("Data/generated") / f"wpt_{self.dataset_path.stem}.csv"
+        dataset_name = self.dataset_path.name if self.dataset_path.is_dir() else self.dataset_path.stem
+        return Path("Data/generated") / f"wpt_{dataset_name}.csv"
+
+    def dataset_files(self):
+        if self.dataset_path.is_file():
+            return [self.dataset_path]
+
+        if not self.dataset_path.is_dir():
+            raise FileNotFoundError(f"RDF dataset path does not exist: {self.dataset_path}")
+
+        files = [
+            path
+            for path in sorted(self.dataset_path.rglob("*"))
+            if path.is_file() and path.suffix.lower() in self.RDF_EXTENSIONS
+        ]
+
+        if len(files) == 0:
+            raise FileNotFoundError(f"No RDF files found in dataset directory: {self.dataset_path}")
+
+        return files
 
     @staticmethod
     def normalize_uri(uri):
@@ -99,46 +120,80 @@ class RDFWidePropertyTable:
 
         return tokens
 
-    def parse_triple(self, line):
-        line = line.strip()
+    def parse_triples(self, statement):
+        statement = statement.strip()
 
-        if not line or line.startswith("#") or self.parse_prefix(line):
-            return None
+        if not statement or statement.startswith("#"):
+            return []
 
-        if line.endswith("."):
-            line = line[:-1].strip()
+        if statement.endswith("."):
+            statement = statement[:-1].strip()
 
-        tokens = self.tokenize_statement(line)
+        tokens = self.tokenize_statement(statement)
 
         if len(tokens) < 3:
-            return None
+            return []
 
         subject = self.expand_token(tokens[0])
-        predicate = self.expand_token(tokens[1])
-        obj = self.expand_token(" ".join(tokens[2:]))
+        triples = []
+        index = 1
 
-        return subject, predicate, obj
+        while index < len(tokens):
+            if tokens[index] in (";", ","):
+                index += 1
+                continue
+
+            predicate = self.expand_token(tokens[index])
+            index += 1
+            object_tokens = []
+
+            while index < len(tokens) and tokens[index] not in (";", ","):
+                object_tokens.append(tokens[index])
+                index += 1
+
+            if object_tokens:
+                obj = self.expand_token(" ".join(object_tokens))
+                triples.append((subject, predicate, obj))
+
+        return triples
+
+    def iter_statements(self, file):
+        statement = []
+
+        for line in file:
+            stripped = line.strip()
+
+            if not stripped or stripped.startswith("#") or self.parse_prefix(stripped):
+                continue
+
+            statement.append(stripped)
+
+            if stripped.endswith("."):
+                yield " ".join(statement)
+                statement = []
+
+        if statement:
+            yield " ".join(statement)
 
     def generate(self):
         rows = defaultdict(lambda: defaultdict(list))
         predicates = []
         seen_predicates = set()
 
-        with self.dataset_path.open() as file:
-            for line in file:
-                triple = self.parse_triple(line)
+        for dataset_file in self.dataset_files():
+            with dataset_file.open() as file:
+                for statement in self.iter_statements(file):
+                    triples = self.parse_triples(statement)
 
-                if triple is None:
-                    continue
+                    for triple in triples:
+                        subject, predicate, obj = triple
+                        column = self.normalize_uri(predicate)
 
-                subject, predicate, obj = triple
-                column = self.normalize_uri(predicate)
+                        if column not in seen_predicates:
+                            seen_predicates.add(column)
+                            predicates.append(column)
 
-                if column not in seen_predicates:
-                    seen_predicates.add(column)
-                    predicates.append(column)
-
-                rows[subject][column].append(obj)
+                        rows[subject][column].append(obj)
 
         self.output_path.parent.mkdir(parents=True, exist_ok=True)
 

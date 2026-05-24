@@ -155,45 +155,78 @@ class SparqlWorkload:
         predicate_bindings = self.filter_predicate_bindings(body, prefixes)
         triples = []
         in_filter = False
+        statement = []
 
         for line in body.splitlines():
-            statement = line.strip()
+            current_line = line.strip()
 
-            if not statement:
+            if not current_line:
                 continue
 
-            upper_statement = statement.upper()
+            upper_statement = current_line.upper()
 
             if in_filter:
-                if ")" in statement:
+                if ")" in current_line:
                     in_filter = False
                 continue
 
             if "FILTER" in upper_statement:
-                if ")" not in statement:
+                if ")" not in current_line:
                     in_filter = True
                 continue
 
-            if upper_statement.startswith("OPTIONAL") or upper_statement.startswith("UNION") or statement in ("{", "}") or statement.startswith("}"):
+            if upper_statement.startswith("OPTIONAL") or upper_statement.startswith("UNION") or current_line in ("{", "}") or current_line.startswith("}"):
+                if statement:
+                    triples.extend(self.triples_from_statement(" ".join(statement), prefixes, predicate_bindings))
+                    statement = []
                 continue
 
-            statement = statement.rstrip(".").strip()
+            statement.append(current_line)
 
-            if statement.endswith("{") or statement.endswith("}"):
+            if current_line.endswith("."):
+                triples.extend(self.triples_from_statement(" ".join(statement), prefixes, predicate_bindings))
+                statement = []
+
+        if statement:
+            triples.extend(self.triples_from_statement(" ".join(statement), prefixes, predicate_bindings))
+
+        return triples
+
+    def triples_from_statement(self, statement, prefixes, predicate_bindings):
+        statement = statement.strip()
+
+        if statement.endswith("."):
+            statement = statement[:-1].strip()
+
+        tokens = self.tokenize_statement(statement)
+
+        if len(tokens) < 3:
+            return []
+
+        subject = self.expand_token(tokens[0], prefixes)
+        triples = []
+        index = 1
+
+        while index < len(tokens):
+            if tokens[index] in (";", ","):
+                index += 1
                 continue
 
-            tokens = self.tokenize_statement(statement)
+            predicate = self.expand_token(tokens[index], prefixes)
+            index += 1
+            object_tokens = []
 
-            if len(tokens) < 3:
+            while index < len(tokens) and tokens[index] not in (";", ","):
+                object_tokens.append(tokens[index])
+                index += 1
+
+            if not object_tokens:
                 continue
-
-            subject = self.expand_token(tokens[0], prefixes)
-            predicate = self.expand_token(tokens[1], prefixes)
-            obj = self.expand_token(" ".join(tokens[2:]), prefixes)
 
             if predicate in predicate_bindings:
                 predicate = predicate_bindings[predicate]
 
+            obj = self.expand_token(" ".join(object_tokens), prefixes)
             triples.append((subject, predicate, obj))
 
         return triples
