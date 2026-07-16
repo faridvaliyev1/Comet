@@ -10,7 +10,6 @@ from Service.Mapping import Mapping
 from Service.Partitioning import Partitioning
 from Service.RDFWidePropertyTable import RDFWidePropertyTable
 from Service.StarPattern import StarPattern
-from Configurations import NULL_THRESHOLD
 from query_converter import convert_workload
 
 
@@ -46,6 +45,20 @@ def parse_args():
         "--dataset-name",
         default=None,
         help="Dataset name used for converted SQL output folder. Defaults to the workload folder name.",
+    )
+    parser.add_argument(
+        "--schema-mode",
+        choices=["h2o", "data-centric"],
+        default="h2o",
+        help=(
+            "Schema variant to materialize. 'data-centric' stops after data-driven "
+            "clustering/partitioning; 'h2o' also adds workload-derived star tables."
+        ),
+    )
+    parser.add_argument(
+        "--tables-output",
+        default=None,
+        help="Directory for exported generated tables. Defaults to Data/results/<schema-mode>.",
     )
     parser.add_argument(
         "--support-threshold",
@@ -98,7 +111,6 @@ def run_pipeline(args):
 
     support_thresholds = [args.support_threshold]
     null_thresholds = [args.null_threshold]
-    property_usage_list = []
     partitioning = None
 
     for support_threshold in support_thresholds:
@@ -126,8 +138,6 @@ def run_pipeline(args):
                 if part is not None:
                     tables_count += 1
 
-            property_usage_list = data_structures.PropertyUsageList
-
             print("-----------------------------------")
             print(
                 f"Support_Threshold: {support_threshold} \n"
@@ -136,40 +146,27 @@ def run_pipeline(args):
             )
             print("------------------------------------")
 
-    star_pattern = StarPattern(args.workload)
+    if args.schema_mode == "h2o":
+        star_pattern = StarPattern(args.workload)
+        star_tables = star_pattern.combine_stars()
 
-    connectors = star_pattern.find_stars()[1]
-    star_tables = star_pattern.combine_stars()
+        stars = []
+        for _key, value in star_tables.items():
+            if len(value) > 0:
+                stars.append(tuple(value))
 
-    stars = []
-    for _key, value in star_tables.items():
-        if len(value) > 0:
-            stars.append(tuple(value))
+        for index, star in enumerate(stars):
+            print(index, ":", star)
+            print("--------------------")
 
-    for index in range(len(stars)):
-        print(index, ":", stars[index])
-        print("--------------------")
-
-    for tables in partitioning.Tables:
-        if len(tables) != 1:
-            for table in tables:
-                for star in stars:
-                    if table in star and (property_usage_list[table] / property_usage_list["Subject"]) > NULL_THRESHOLD:
-                        tuple(t for t in tables if t != table)
-
-    for tables in partitioning.Tables:
-        if len(tables) != 1:
-            for table in tables:
-                for connector in connectors:
-                    if connector in table and (property_usage_list[table] / property_usage_list["Subject"]) > NULL_THRESHOLD:
-                        tuple(t for t in tables if t != table)
-            print("-------------------------------------")
-
-    for star in stars:
-        partitioning.Tables.append(star)
+        for star in stars:
+            partitioning.Tables.append(star)
+    else:
+        print("---Skipping workload-star augmentation for data-centric baseline---")
 
     mapping = Mapping(partitioning.Tables)
-    mapping.copy_to_table()
+    tables_output = args.tables_output or f"Data/results/{args.schema_mode}"
+    mapping.copy_to_table(tables_output)
 
     print("---SPARQL workload is converting to SQL--------")
     converted_count, converted_output = convert_workload(

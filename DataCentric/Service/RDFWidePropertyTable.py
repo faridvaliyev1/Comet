@@ -4,7 +4,7 @@ from pathlib import Path
 
 
 class RDFWidePropertyTable:
-    RDF_EXTENSIONS = {".nt", ".n3", ".ttl", ".rdf"}
+    RDF_EXTENSIONS = {".nt", ".n3", ".ttl", ".rdf", ".owl"}
 
     def __init__(self, dataset_path, output_path=None, rdf_format=None):
         self.dataset_path = Path(dataset_path)
@@ -181,6 +181,38 @@ class RDFWidePropertyTable:
         seen_predicates = set()
 
         for dataset_file in self.dataset_files():
+            if dataset_file.suffix.lower() in {".ttl", ".rdf", ".owl"}:
+                try:
+                    from rdflib import BNode, Graph, URIRef
+                except ModuleNotFoundError as exc:
+                    raise RuntimeError(
+                        f"Parsing {dataset_file.suffix} requires rdflib"
+                    ) from exc
+                format_name = {
+                    ".ttl": "turtle",
+                    ".rdf": "xml",
+                    ".owl": "xml",
+                }[dataset_file.suffix.lower()]
+                graph = Graph()
+                graph.parse(dataset_file, format=format_name)
+                def serialize(term):
+                    if isinstance(term, URIRef):
+                        return str(term)
+                    if isinstance(term, BNode):
+                        return "_:" + str(term)
+                    return term.n3()
+
+                triples = (
+                    (serialize(subject), str(predicate), serialize(obj))
+                    for subject, predicate, obj in graph
+                )
+                for subject, predicate, obj in triples:
+                    column = self.normalize_uri(predicate)
+                    if column not in seen_predicates:
+                        seen_predicates.add(column)
+                        predicates.append(column)
+                    rows[subject][column].append(obj)
+                continue
             with dataset_file.open() as file:
                 for statement in self.iter_statements(file):
                     triples = self.parse_triples(statement)

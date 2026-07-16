@@ -262,6 +262,9 @@ def convert_sparql_query(query, workload):
 
         for _subject, column, obj in group["triples"]:
             if is_variable(obj):
+                where_conditions.append(
+                    f"{alias}.{quote_identifier(column)} IS NOT NULL"
+                )
                 continue
 
             where_conditions.append(

@@ -221,7 +221,7 @@ class Mapping:
 
     # ---------- end of private functions ----------
 
-    def copy_to_table(self):
+    def copy_to_table(self, output_dir="Data/results/h2o"):
         sql = "SELECT DISTINCT TABLE_NAME FROM GLOBAL_MAPPING"
 
         tables = DbContext.Select(sql)
@@ -230,7 +230,6 @@ class Mapping:
             print("No tables found in GLOBAL_MAPPING. Nothing to export.")
             return
 
-        output_dir = "Data/results/h2o"
         os.makedirs(output_dir, exist_ok=True)
         
         for table in tables:

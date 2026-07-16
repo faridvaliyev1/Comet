@@ -81,10 +81,16 @@ This will:
 - Create a new branch:  
   git checkout -b feature/your-feature
 
+## Performance benchmarking
+
+The reproducible Spark SQL benchmark harness is documented in
+[`benchmark/README.md`](benchmark/README.md). It supports warm-ups, repeated trials,
+cross-layout result validation, dataset/scale matrices, raw CSV measurements,
+per-run plots, and cross-scale plots.
+
 ## 📄 License
 
 
 ## 🙋‍♂️ Contact
 
 Maintained by [Farid Valiyev](https://github.com/faridvaliyev1).  
-

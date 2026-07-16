@@ -12,6 +12,9 @@ class Formulas:
     def null_percentage(Cluster,PropertyUsage):
         Cluster_max_count=0
         Cluster_length=len(Cluster)
+        if Cluster_length == 0:
+            return 0
+
         if Cluster_length>0:
             Cluster_max_count=PropertyUsage[Cluster[0]]
         PropertyUsage_Sum=0
@@ -23,7 +26,10 @@ class Formulas:
 
 
         numerator=Cluster_length*Cluster_max_count-PropertyUsage_Sum
-        denominator=(Cluster_length+1)*Cluster_max_count
+        denominator=Cluster_length*Cluster_max_count
+
+        if denominator == 0:
+            return 0
         
         cluster_null_percentage= numerator/denominator
         

@@ -101,9 +101,15 @@ Queries/SQL/sp2bench/q1.sql
 --dataset-name      Name used for Queries/SQL/<dataset-name>
 --wpt-output        Optional generated WPT CSV path
 --converted-output  Optional converted SQL output directory
+--schema-mode       h2o (with workload stars) or data-centric (without them)
+--tables-output     Optional generated table CSV directory
 --support-threshold Existing clustering support threshold
 --null-threshold    Existing partitioning null threshold
 ```
+
+The `data-centric` mode exists primarily as a controlled benchmark baseline. Always
+write its table CSVs and converted SQL to their own directories; the generated table
+numbers are meaningful only within the same generation run.
 
 Example with explicit output paths:
 
