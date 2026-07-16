@@ -1,4 +1,11 @@
 *.pyc
 *~
 *.swp
+*.pdf
+.DS_Store
 .idea
+benchmark/
+paper/
+DataCentric/Queries/SPARQL/bsbm/
+DataCentric/Queries/SPARQL/lubm/
+DataCentric/Queries/SQL/ldbc/
